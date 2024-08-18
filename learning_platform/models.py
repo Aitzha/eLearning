@@ -17,3 +17,10 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+    class Meta:
+        permissions = [
+            ("change_own_userprofile", "Can change own user profile"),
+            ("view_own_userprofile", "Can view own user profile"),
+            ("delete_own_userprofile", "Can delete own user profile")
+        ]
