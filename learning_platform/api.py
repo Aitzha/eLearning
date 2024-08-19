@@ -2,14 +2,18 @@ from django.contrib.auth import authenticate, login, logout
 from rest_framework import status, views
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .serializers import UserSerializer
+
+from .models import UserProfile
+from .serializers import UserSerializer, UserProfilePrivateSerializer, UserProfilePublicSerializer
 
 
 class ProfileView(views.APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        return Response()
+        user_profile = UserProfile.objects.get(user=request.user)
+        serializer = UserProfilePrivateSerializer(user_profile)
+        return Response(serializer.data)
 
 
 class RegisterView(views.APIView):

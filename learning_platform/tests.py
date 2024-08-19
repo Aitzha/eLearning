@@ -1,18 +1,18 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
-from .model_factories import UserFactory
+from .model_factories import UserFactory, UserProfileFactory
 
 
 class ProfileViewTest(APITestCase):
     def test_profile_authenticated(self):
-        user = UserFactory()
-        self.client.force_authenticate(user=user)
-        response = self.client.get(reverse('profile'))
+        self.user_profile = UserProfileFactory()
+        self.client.force_authenticate(user=self.user_profile.user)
+        response = self.client.get(reverse('api_profile'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_profile_unauthenticated(self):
-        response = self.client.get(reverse('profile'))
+        response = self.client.get(reverse('api_profile'))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
@@ -23,25 +23,26 @@ class RegisterViewTest(APITestCase):
             'email': 'newuser@example.com',
             'password': 'newpassword123'
         }
-        response = self.client.post(reverse('register'), data)
+        response = self.client.post(reverse('api_register'), data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_registration_unsuccessful(self):
-        response = self.client.post(reverse('register'))
+        response = self.client.post(reverse('api_register'))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class LoginViewTest(APITestCase):
     def setUp(self):
-        self.user = UserFactory()
+        self.password = "password"
+        self.user = UserFactory.create(password=self.password)
         self.client = APIClient()
 
     def test_login_successful(self):
         data = {
             'username': self.user.username,
-            'password': 'defaultpassword'  # This is the password set by factory
+            'password': self.password
         }
-        response = self.client.post(reverse('login'), data)
+        response = self.client.post(reverse('api_login'), data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_login_unsuccessful(self):
@@ -49,7 +50,7 @@ class LoginViewTest(APITestCase):
             'username': self.user.username,
             'password': 'wrongpassword'
         }
-        response = self.client.post(reverse('login'), data)
+        response = self.client.post(reverse('api_login'), data)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
@@ -60,5 +61,5 @@ class LogoutViewTest(APITestCase):
         self.client.force_authenticate(user=self.user)
 
     def test_logout(self):
-        response = self.client.post(reverse('logout'))
+        response = self.client.post(reverse('api_logout'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
