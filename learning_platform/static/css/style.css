@@ -108,8 +108,7 @@ footer {
 
 .auth-form {
     max-width: 300px;
-    margin: auto;
-    margin-top: 50px;
+    margin: 100px auto auto;
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
