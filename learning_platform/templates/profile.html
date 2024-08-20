@@ -1,44 +1,20 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
-    <header>
-        <div class="logo">
-            <a href="/">Logo</a>
-        </div>
-        <div class="user-menu" data-logged-in="{% if is_logged_in %}true{% else %}false{% endif %}"
-             data-username="{% if is_logged_in %}{{ username }}{% endif %}">
-        </div>
-    </header>
 
-    <main>
-        <div class="profile-container">
-            <img src="{% static 'images/profile-placeholder.png' %}" alt="Profile Photo" class="profile-photo">
-            <h1>{{ user.username }}</h1>
-            <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
-            <p>Date of Birth: [Placeholder for Date of Birth]</p>
-            <h3>Courses Enrolled:</h3>
-            <ul>
-                <!-- Placeholder for list of courses -->
-                <li>Course Name 1</li>
-                <li>Course Name 2</li>
-            </ul>
-            <p>Status: [Placeholder for Status]</p>
-        </div>
-    </main>
+{% block title %}User Profile{% endblock %}
 
-    <footer>
-        <p>Contact Us: <br>
-           Email: contact@example.com <br>
-           Phone: +123 456 7890</p>
-    </footer>
-
-    <script src="{% static 'js/app.js' %}"></script>
-</body>
-</html>
+{% block content %}
+<div class="profile-container">
+    <img src="{% static 'images/profile-placeholder.png' %}" alt="Profile Photo" class="profile-photo">
+    <h1>{{ request.user.username }}</h1>
+    <p>Name: {{ request.user.first_name }} {{ request.user.last_name }}</p>
+    <p>Date of Birth: [Placeholder for Date of Birth]</p>
+    <h3>Courses Enrolled:</h3>
+    <ul>
+        <!-- Placeholder for list of courses -->
+        <li>Course Name 1</li>
+        <li>Course Name 2</li>
+    </ul>
+    <p>Status: [Placeholder for Status]</p>
+</div>
+{% endblock %}

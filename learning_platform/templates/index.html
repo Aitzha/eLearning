@@ -1,32 +1,8 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
-    <header>
-        <div class="logo">
-            <a href="/">Logo</a>
-        </div>
-        <div class="user-menu" data-logged-in="{% if is_logged_in %}true{% else %}false{% endif %}"
-             data-username="{% if is_logged_in %}{{ username }}{% endif %}">
-        </div>
-    </header>
+{% extends 'base.html' %}
 
-    <main>
-        <h1>Welcome to Our Learning Platform</h1>
-    </main>
+{% block title %}Home Page{% endblock %}
 
-    <footer>
-        <p>Contact Us: <br>
-           Email: contact@example.com <br>
-           Phone: +123 456 7890</p>
-    </footer>
-
-    <script src="{% static 'js/app.js' %}"></script>
-</body>
-</html>
+{% block content %}
+<h1>Welcome to Our Learning Platform</h1>
+<!-- Additional home-specific content goes here -->
+{% endblock %}
