@@ -1,49 +1,24 @@
-// app.js
-function apiRequest(url, method, data) {
-    return fetch(url, {
-        method: method,
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': localStorage.getItem('token') ? `Token ${localStorage.getItem('token')}` : ''
-        },
-        body: data ? JSON.stringify(data) : null
-    }).then(response => response.json());
-}
+document.addEventListener('DOMContentLoaded', function() {
+    const userMenu = document.querySelector('.user-menu');
+    const isLoggedIn = userMenu.getAttribute('data-logged-in') === 'true';
+    const username = userMenu.getAttribute('data-username');
 
-function login() {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    apiRequest('/api/login/', 'POST', { username, password })
-        .then(data => {
-            localStorage.setItem('token', data.token);
-            document.getElementById('login-form').style.display = 'none';
-            loadProfile();
-        });
-}
-
-function register() {
-    const username = document.getElementById('reg-username').value;
-    const password = document.getElementById('reg-password').value;
-    const email = document.getElementById('reg-email').value;
-    apiRequest('/api/register/', 'POST', { username, password, email })
-        .then(data => {
-            alert('Registration Successful!');
-        });
-}
-
-function loadProfile() {
-    apiRequest('/api/profile/', 'GET')
-        .then(data => {
-            document.getElementById('profile').style.display = 'block';
-            document.getElementById('profile-info').innerText = `Hello, ${data.username}`;
-        });
-}
+    if (isLoggedIn) {
+        userMenu.innerHTML = `
+            <div class="dropdown">
+                <button class="dropbtn">${username}</button>
+                <div class="dropdown-content">
+                    <a href="/profile">Profile</a>
+                    <a href="#" onclick="logout()" style="color: red;">Logout</a>
+                </div>
+            </div>
+        `;
+    } else {
+        userMenu.innerHTML = '<a href="/login">Login/Sign In</a>';
+    }
+});
 
 function logout() {
-    apiRequest('/api/logout/', 'POST')
-        .then(data => {
-            localStorage.removeItem('token');
-            document.getElementById('profile').style.display = 'none';
-            document.getElementById('login-form').style.display = 'block';
-        });
+    console.log('Logout logic here');
+    // Add logout functionality
 }
