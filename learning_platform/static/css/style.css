@@ -20,6 +20,12 @@ header {
     color: #333;
 }
 
+.logo img {
+    height: 50px;
+    vertical-align: middle;
+}
+
+
 .user-menu {
     align-self: center;
 }
