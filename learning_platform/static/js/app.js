@@ -19,26 +19,30 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// Handle Login
+document.getElementById('login-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
 
-// // Handle Login
-// document.getElementById('login-form').addEventListener('submit', function(event) {
-//     event.preventDefault();
-//     const username = document.getElementById('username').value;
-//     const password = document.getElementById('password').value;
-//
-//     fetch('/api/login/', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ username, password })
-//     }).then(response => response.json())
-//       .then(data => {
-//           if (data.token) {
-//               localStorage.setItem('token', data.token);
-//               window.location.href = '/'; // Redirect to home on success
-//           } else {
-//               alert('Login failed!');
-//           }
-//       });
-// });
+    fetch('/api/login/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.token) {
+            localStorage.setItem('token', data.token);
+            window.location.href = '/';
+        } else {
+            alert('Login failed. Please check your credentials and try again.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Login failed. Please try again.');
+    });
+});

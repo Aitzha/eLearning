@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate, login, logout
 from rest_framework import status, views
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.authtoken.models import Token
 
 from .models import UserProfile
 from .serializers import UserSerializer, UserProfilePrivateSerializer, UserProfilePublicSerializer
@@ -33,10 +34,10 @@ class LoginView(views.APIView):
     def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(username=username, password=password)
         if user is not None:
-            login(request, user)
-            return Response()
+            token, _ = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key, 'username': user.username})
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
