@@ -24,6 +24,7 @@ document.getElementById('register-form').addEventListener('submit', function(eve
     })
     .then(response => {
         if (response.ok) {
+            localStorage.setItem('registrationSuccess', 'Registration was successful. Please log in.');
             window.location.href = '/login';
         } else {
             errorMessage.textContent = 'Username is already taken';

@@ -1,26 +1,40 @@
-document.getElementById('login-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+document.addEventListener('DOMContentLoaded', function() {
+    const successMessage = document.getElementById('success-message');
+    const successText = localStorage.getItem('registrationSuccess');
+    if (successText) {
+        console.log(successText)
+        console.log("I was here")
+        successMessage.textContent = successText;
+        localStorage.removeItem('registrationSuccess');
+    }
 
-    fetch('/api/login/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.token) {
-            localStorage.setItem('token', data.token);
-            window.location.href = '/';
-        } else {
-            alert('Login failed. Please check your credentials and try again.');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Login failed. Please try again.');
+    document.getElementById('login-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const form = event.target;
+        const errorMessage = document.getElementById('error-message');
+
+        const data = {
+            username: form.username.value,
+            password: form.password.value
+        };
+
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = '/';
+            } else {
+                errorMessage.textContent = data.message || 'Invalid credentials. Please try again.';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            errorMessage.textContent = 'Login failed. Please try again.';
+        });
     });
 });
