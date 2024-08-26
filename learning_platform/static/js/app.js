@@ -1,23 +1,29 @@
 // Handle header
 document.addEventListener('DOMContentLoaded', function() {
-    const userMenu = document.querySelector('.user-menu');
-    const isLoggedIn = userMenu.getAttribute('data-logged-in') === 'true';
-    const username = userMenu.getAttribute('data-username');
+    const userMenu = document.getElementById('user-menu');
+    const token = localStorage.getItem('token');
 
-    if (isLoggedIn) {
-        userMenu.innerHTML = `
-            <div class="dropdown">
-                <button class="dropbtn">${username}</button>
-                <div class="dropdown-content">
-                    <a href="/profile">Profile</a>
-                    <a href="/logout" style="color: red;">Logout</a>
-                </div>
-            </div>
-        `;
+    if (token) {
+        fetch('/api/user/', {
+            headers: {
+                'Authorization': `Token ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            userMenu.innerHTML = `<div>Welcome, ${data.username}! <a href="#" onclick="logout()">Logout</a></div>`;
+        })
+        .catch(error => console.error('Error fetching user data:', error));
     } else {
         userMenu.innerHTML = '<a href="/login">Login/Sign In</a>';
     }
 });
+
+function logout() {
+    localStorage.removeItem('token');
+    window.location.href = '/login';
+}
+
 
 // Handle Login
 document.getElementById('login-form').addEventListener('submit', function(event) {

@@ -1,19 +1,42 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
+from rest_framework.authtoken.models import Token
+
 from .model_factories import UserFactory, UserProfileFactory
 
 
+class UserViewAPITest(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+
+    def test_user_authenticated(self):
+        user_profile = UserProfileFactory()
+        token = Token.objects.create(user=user_profile.user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        response = self.client.get(reverse('api_user'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['username'], user_profile.user.username)
+
+    def test_user_unauthenticated(self):
+        response = self.client.get(reverse('api_user'))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
 class ProfileViewTest(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+
     def test_profile_authenticated(self):
         self.user_profile = UserProfileFactory()
-        self.client.force_authenticate(user=self.user_profile.user)
+        token = Token.objects.create(user=self.user_profile.user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         response = self.client.get(reverse('api_profile'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_profile_unauthenticated(self):
         response = self.client.get(reverse('api_profile'))
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class RegisterViewTest(APITestCase):

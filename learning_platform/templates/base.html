@@ -12,9 +12,7 @@
         <div class="logo">
             <a href="/"><img src="{% static 'images/logo.png' %}" alt="Logo" style="height: 50px;"></a>
         </div>
-        <div class="user-menu" data-logged-in="{% if request.user.is_authenticated %}true{% else %}false{% endif %}"
-             data-username="{% if request.user.is_authenticated %}{{ request.user.username }}{% endif %}">
-        </div>
+        <div class="user-menu" id="user-menu"></div>
     </header>
 
     <main>
