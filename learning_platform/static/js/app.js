@@ -23,6 +23,23 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function logout() {
-    localStorage.removeItem('token');
-    window.location.href = '/login';
+    fetch('/api/logout/', {
+        method: 'POST',
+        headers: {
+            'Authorization': 'Token ' + localStorage.getItem('token'),
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        } else {
+            alert('Logout failed. Please try again.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Logout failed. Please try again.');
+    });
 }

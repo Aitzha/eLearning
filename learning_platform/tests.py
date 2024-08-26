@@ -124,11 +124,11 @@ class LoginViewTest(APITestCase):
 
 
 class LogoutViewTest(APITestCase):
-    def setUp(self):
-        self.user = UserFactory()
-        self.client = APIClient()
-        self.client.force_authenticate(user=self.user)
-
     def test_logout(self):
+        user_profile = UserProfileFactory()
+        token = Token.objects.create(user=user_profile.user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
         response = self.client.post(reverse('api_logout'))
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
