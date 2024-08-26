@@ -1,6 +1,7 @@
 document.getElementById('register-form').addEventListener('submit', function(event) {
     event.preventDefault();
     const form = event.target;
+    const errorMessage = document.getElementById('error-message');
 
     const data = {
         username: form.username.value,
@@ -10,7 +11,7 @@ document.getElementById('register-form').addEventListener('submit', function(eve
     };
 
     if (data.password !== data.password2) {
-        alert('Passwords do not match!');
+        errorMessage.textContent = 'Passwords do not match!';
         return;
     }
 
@@ -25,11 +26,11 @@ document.getElementById('register-form').addEventListener('submit', function(eve
         if (response.ok) {
             window.location.href = '/login';
         } else {
-            alert(data.message || 'Registration failed, please try again.');
+            errorMessage.textContent = 'Username is already taken';
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error registering account.');
+        errorMessage.textContent = 'Error registering account.';
     });
 });
