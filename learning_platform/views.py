@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.contrib.auth import logout
 
+
 def index(request):
     return render(request, 'index.html', {
         'is_logged_in': request.user.is_authenticated,
@@ -17,6 +18,6 @@ def profile(request):
 def login(request):
     return render(request, 'login.html')
 
-def user_logout(request):
-    logout(request)
-    return HttpResponseRedirect('../')
+
+def register(request):
+    return render(request, 'registration.html')
