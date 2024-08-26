@@ -105,36 +105,3 @@ footer {
     border-radius: 50%;
     margin-bottom: 20px;
 }
-
-
-.auth-form {
-    max-width: 300px;
-    margin: 100px auto auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.auth-form label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-.auth-form input[type="text"],
-.auth-form input[type="password"],
-.auth-form input[type="email"] {
-    width: calc(100% - 20px);
-    padding: 8px 10px;
-    margin-bottom: 10px;
-}
-
-.auth-form button {
-    width: 100%;
-    padding: 10px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
