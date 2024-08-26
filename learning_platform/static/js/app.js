@@ -5,17 +5,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (token) {
         fetch('/api/user/', {
-            headers: {
-                'Authorization': `Token ${token}`
-            }
+            headers: { 'Authorization': 'Token ' + token }
         })
         .then(response => response.json())
-        .then(data => {
-            userMenu.innerHTML = `<div>Welcome, ${data.username}! <a href="#" onclick="logout()">Logout</a></div>`;
-        })
-        .catch(error => console.error('Error fetching user data:', error));
+        .then(user => {
+            userMenu.innerHTML = `
+                <div class="dropdown">
+                    <button class="dropbtn">${user.username}</button>
+                    <div class="dropdown-content">
+                        <a href="/profile">Profile</a>
+                        <a href="#" onclick="logout()" style="color: red;">Logout</a>
+                    </div>
+                </div>`;
+        });
     } else {
-        userMenu.innerHTML = '<a href="/login">Login/Sign In</a>';
+        userMenu.innerHTML = '<a href="/login">Sign In/Sign Up</a>';
     }
 });
 
