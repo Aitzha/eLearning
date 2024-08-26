@@ -21,9 +21,8 @@ document.getElementById('register-form').addEventListener('submit', function(eve
         },
         body: JSON.stringify(data)
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
+    .then(response => {
+        if (response.ok) {
             window.location.href = '/login';
         } else {
             alert(data.message || 'Registration failed, please try again.');
