@@ -94,6 +94,7 @@ class LoginViewTest(APITestCase):
     def setUp(self):
         self.password = "password"
         self.user = UserFactory.create(password=self.password)
+        self.token = Token.objects.create(user=self.user)
         self.client = APIClient()
 
     def test_login_successful(self):
@@ -108,6 +109,8 @@ class LoginViewTest(APITestCase):
 
         # Check response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['token'], self.token.key)
+        self.assertEqual(response.data['username'], self.user.username)
 
     def test_login_unsuccessful(self):
         # Preparation data

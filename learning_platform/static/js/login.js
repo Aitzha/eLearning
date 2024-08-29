@@ -25,11 +25,13 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify(data)
         })
-        .then(response => {
-            if (response.ok) {
+        .then(response => response.json())
+        .then(data => {
+            if (data.token) {
+                localStorage.setItem('token', data.token);
                 window.location.href = '/';
             } else {
-                errorMessage.textContent = data.message || 'Invalid credentials. Please try again.';
+                errorMessage.textContent = 'Invalid credentials. Please try again.';
             }
         })
         .catch(error => {
