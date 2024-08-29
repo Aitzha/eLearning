@@ -22,7 +22,6 @@ class UserProfile(models.Model):
         # Custom permissions
         permissions = [
             ("change_own_userprofile", "Can change own user profile"),
-            ("view_own_userprofile", "Can view own user profile"),
             ("delete_own_userprofile", "Can delete own user profile")
         ]
 
@@ -34,6 +33,13 @@ class Course(models.Model):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        # Custom permissions
+        permissions = [
+            ("change_own_course", "Can change own course"),
+            ("delete_own_course", "Can delete own course")
+        ]
 
 
 class Section(models.Model):
