@@ -19,8 +19,56 @@ class UserProfile(models.Model):
         return self.user.username
 
     class Meta:
+        # Custom permissions
         permissions = [
             ("change_own_userprofile", "Can change own user profile"),
             ("view_own_userprofile", "Can view own user profile"),
             ("delete_own_userprofile", "Can delete own user profile")
         ]
+
+
+class Course(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    teacher = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='courses_taught')
+
+    def __str__(self):
+        return self.title
+
+
+class Section(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='sections')
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.title
+
+
+class ContentItem(models.Model):
+    section = models.ForeignKey(Section, on_delete=models.CASCADE, related_name='content_items')
+    title = models.CharField(max_length=255)
+    content_type = models.CharField(max_length=50)  # e.g., 'video', 'pdf'
+    file = models.FileField(upload_to='content_files/', blank=True, null=True)  # For PDFs or other documents
+    video_url = models.URLField(blank=True, null=True)  # For YouTube videos link
+
+    def __str__(self):
+        return self.title
+
+
+class Enrollment(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='enrollments')
+    student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='enrollments')
+
+    def __str__(self):
+        return f"{self.student.username} enrolled in {self.course.title}"
+
+
+class Feedback(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='feedbacks')
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField()
+    date_posted = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Feedback by {self.student.username} on {self.course.title}"
