@@ -34,13 +34,6 @@ class Course(models.Model):
     def __str__(self):
         return self.title
 
-    class Meta:
-        # Custom permissions
-        permissions = [
-            ("change_own_course", "Can change own course"),
-            ("delete_own_course", "Can delete own course")
-        ]
-
 
 class Section(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='sections')
