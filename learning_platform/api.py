@@ -13,8 +13,7 @@ class UserView(views.APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        user_profile = UserProfile.objects.get(user=request.user)
-        serializer = UserProfilePublicSerializer(user_profile)
+        serializer = UserProfilePublicSerializer(request.user.profile)
         return Response(serializer.data)
 
 
@@ -22,8 +21,7 @@ class ProfileView(views.APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        user_profile = UserProfile.objects.get(user=request.user)
-        serializer = UserProfilePrivateSerializer(user_profile)
+        serializer = UserProfilePrivateSerializer(request.user.profile)
         return Response(serializer.data)
 
 
