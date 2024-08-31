@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Role, UserProfile
+from .models import *
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -34,3 +34,9 @@ class UserProfilePrivateSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['username', 'email', 'role']
+
+
+class CourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ['title', 'description', 'teacher']
