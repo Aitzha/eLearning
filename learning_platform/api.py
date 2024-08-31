@@ -6,7 +6,8 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
 
 from .models import UserProfile
-from .serializers import UserSerializer, UserProfilePrivateSerializer, UserProfilePublicSerializer
+from .serializers import *
+from .units import user_has_permission
 
 
 class UserView(views.APIView):
@@ -56,3 +57,25 @@ class LogoutView(views.APIView):
     def post(self, request):
         request.user.auth_token.delete()
         return Response(status=status.HTTP_200_OK)
+
+
+class CourseCreateView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        # Create a mutable copy of request.data (to be able to modify it)
+        data = request.data.copy()
+
+        # Use the custom utility function to check permissions
+        if not user_has_permission(request.user, 'add_course'):
+            return Response({'error': 'You do not have permission to add courses.'}, status=status.HTTP_403_FORBIDDEN)
+
+        # Set the teacher to the current user
+        data['teacher'] = request.user.id
+
+        serializer = CourseSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

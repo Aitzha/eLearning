@@ -139,6 +139,87 @@ class LogoutViewTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
+class CourseCreateAPITests(APITestCase):
+    def setUp(self):
+        """Setup before every test"""
+
+        # URL used for tests
+        self.url = reverse("api_course_create")
+
+        # Get "add_course" permission
+        self.add_course_perm = Permission.objects.get(codename='add_course')
+
+    def test_create_course_with_permission(self):
+        """
+        Testing course creation with the appropriate permissions and valid data.
+        Should succeed and create new course in database.
+        """
+
+        # Create role and assign it to user profile
+        teacher_role = RoleFactory.create(name="Teacher")
+        teacher_role.permissions.add(self.add_course_perm)
+        teacher = UserProfileFactory.create(role=teacher_role)
+
+        # Create and add credentials
+        token = Token.objects.create(user=teacher.user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+        # Create a data for new course
+        data = {'title': 'New Course', 'description': 'A new course description'}
+
+        # Send request
+        response = self.client.post(self.url, data)
+
+        # Check response
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Check Database
+        self.assertEqual(Course.objects.count(), 1)
+        self.assertEqual(Course.objects.first().title, 'New Course')
+
+    def test_create_course_without_permission(self):
+        """
+        Testing course creation without permissions and valid data.
+        Should fail and forbid endpoint access.
+        """
+
+        # Create user, role and assign them to user profile
+        student_role = RoleFactory()
+        student = UserProfileFactory.create(role=student_role)
+
+        # Create and add credentials
+        token = Token.objects.create(user=student.user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+        # Create a data for new course
+        data = {'title': 'Unauthorized Course', 'description': 'This should not be created'}
+
+        # Send request
+        response = self.client.post(self.url, data)
+
+        # Check response
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # Check Database
+        self.assertEqual(Course.objects.count(), 0)
+
+    def test_create_course_unauthorized(self):
+        """
+        Testing course creation unauthorized
+        Should fail and block endpoint access.
+        """
+
+        # Send request
+        response = self.client.post(self.url)
+
+        # Check response
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+
+
+
+
 class PermissionUtilityTests(APITestCase):
     def test_user_has_permission_true(self):
         """User with permission should return True"""
