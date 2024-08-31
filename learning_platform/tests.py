@@ -1,3 +1,4 @@
+from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 from django.contrib.auth.models import User
 from rest_framework.test import APITestCase, APIClient
@@ -5,7 +6,8 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 
 from .model_factories import UserFactory, UserProfileFactory
-from .models import UserProfile
+from .models import *
+from .units import user_has_permission
 
 
 class UserViewAPITest(APITestCase):
@@ -135,3 +137,31 @@ class LogoutViewTest(APITestCase):
         response = self.client.post(reverse('api_logout'))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class PermissionUtilityTests(APITestCase):
+    def test_user_has_permission_true(self):
+        """User with permission should return True"""
+
+        # Get add_course permission
+        add_course_perm = Permission.objects.get(codename='add_course')
+
+        # Create user, role and assign them to user profile
+        teacher_role = Role.objects.create(name="Teacher")
+        teacher_role.permissions.add(add_course_perm)
+        teacher = User.objects.create_user(username='teacher', password='teacher123')
+        UserProfile.objects.create(user=teacher, role=teacher_role)
+
+        # Check the output
+        self.assertTrue(user_has_permission(teacher, 'add_course'))
+
+    def test_user_has_permission_false(self):
+        """User without permission should return False"""
+
+        # Create user, role and assign them to user profile
+        student_role = Role.objects.create(name="Student")
+        student = User.objects.create_user(username='student', password='student123')
+        UserProfile.objects.create(user=student, role=student_role)
+
+        # Check the output
+        self.assertFalse(user_has_permission(student, 'add_course'))
