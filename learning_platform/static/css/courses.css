@@ -1,0 +1,21 @@
+.course-list {
+    width: 80%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.course {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin: 10px 0;
+}
+
+#pagination-controls {
+    margin-top: 20px;
+}
+
+#pagination-controls button {
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+}

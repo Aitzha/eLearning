@@ -11,7 +11,6 @@ def index(request):
 
 
 def profile(request):
-    # You can add more logic here to fetch user-specific data
     return render(request, 'profile.html', {'user': request.user})
 
 
@@ -21,3 +20,7 @@ def login(request):
 
 def register(request):
     return render(request, 'registration.html')
+
+
+def courses(request):
+    return render(request, "courses.html")

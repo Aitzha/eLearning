@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Courses{% endblock %}
+
+{% block content %}
+    <div class="course-list">
+        <h2>Courses</h2>
+        <div id="course-container"></div>
+        <div id="pagination-controls">
+            <button id="prev-page" disabled>Previous</button>
+            <span id="page-info"></span>
+            <button id="next-page">Next</button>
+        </div>
+    </div>
+
+    <script src="{% static 'js/courses.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/courses.css' %}">
+{% endblock %}
