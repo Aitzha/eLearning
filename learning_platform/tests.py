@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.urls import reverse
 from django.contrib.auth.models import User
 from rest_framework.test import APITestCase, APIClient
@@ -141,7 +142,12 @@ class LogoutViewTest(APITestCase):
 
 class CourseCreateAPITests(APITestCase):
     def setUp(self):
-        """Setup before every test"""
+        """
+        Setup before every test
+        Preparations:
+            1) Get url to the endpoint
+            2) Get add course permission
+        """
 
         # URL used for tests
         self.url = reverse("api_course_create")
@@ -216,10 +222,6 @@ class CourseCreateAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-
-
-
-
 class PermissionUtilityTests(APITestCase):
     def test_user_has_permission_true(self):
         """User with permission should return True"""
@@ -244,3 +246,77 @@ class PermissionUtilityTests(APITestCase):
 
         # Check the output
         self.assertFalse(user_has_permission(student.user, 'add_course'))
+
+
+class CourseListPaginationAPITest(APITestCase):
+        def setUp(self):
+            """
+            Setup before every test
+            Permission:
+                1) Get url to the endpoint
+                2) Create teacher account
+                3) Get page size from settings
+                4) Create multiple courses
+            """
+
+            # Get url
+            self.url = reverse('api_course_list')
+
+            # Create teacher user profile
+            teacher = UserProfileFactory()
+
+            # Get page size from settings (create more course than page size by 1)
+            self.page_size = settings.REST_FRAMEWORK['PAGE_SIZE']
+            self.courses_number = self.page_size + 1
+
+            # Create courses
+            for i in range(self.courses_number):
+                Course.objects.create(title=f'Course {i + 1}', description=f'Description {i + 1}',
+                                      teacher=teacher)
+
+        def test_pagination_works(self):
+            """
+            Test that pagination works correctly
+            Should return the correct number of items per page
+            """
+
+            # Send request
+            response = self.client.get(self.url)
+
+            # Check the response
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertIn('results', response.data)
+            self.assertIn('count', response.data)
+            self.assertIn('next', response.data)
+            self.assertIn('previous', response.data)
+
+            self.assertEqual(response.data['count'], self.courses_number)
+            self.assertEqual(len(response.data['results']), self.page_size)
+
+        def test_next_page(self):
+            """
+            Test that the next page link works
+            Should return the remaining courses
+            """
+
+            # Send first request to get url for next page
+            first_page_response = self.client.get(self.url)
+
+            # Send request using next page url
+            response = self.client.get(first_page_response.data['next'])
+
+            # Check the response
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(len(response.data['results']), self.courses_number - self.page_size)
+
+        def test_page_out_of_bounds(self):
+            """
+            Test requesting a page that is out of bounds
+            Should return 404 error
+            """
+
+            # Send request (there can be only 2 pages)
+            response = self.client.get(f'{self.url}?page=3')
+
+            # Check response
+            self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
