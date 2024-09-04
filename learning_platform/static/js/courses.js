@@ -5,6 +5,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const prevButton = document.getElementById('prev-page');
     const nextButton = document.getElementById('next-page');
 
+    // Get the page number from the URL (if available)
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialPage = parseInt(urlParams.get('page')) || 1;
+
     function loadCourses(page) {
         fetch(`/api/courses/?page=${page}`)
             .then(response => response.json())
@@ -18,20 +22,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 // Update pagination controls
-                pageInfo.textContent = `Page ${page} of ${Math.ceil(data.count / PAGE_SIZE)}`;
+                const totalPages = Math.ceil(data.count / PAGE_SIZE);
+                pageInfo.textContent = `Page ${page} of ${totalPages}`;
                 prevButton.disabled = !data.previous;
                 nextButton.disabled = !data.next;
 
                 // Update current page
                 currentPage = page;
+
+                // Update the URL without refreshing the page
+                const newUrl = `${window.location.pathname}?page=${page}`;
+                window.history.pushState({page}, '', newUrl);
             })
             .catch(error => console.error('Error fetching courses:', error));
     }
 
-    // Load the first page of courses
-    loadCourses(currentPage);
+    // Load the page based on the URL, or default to page 1
+    loadCourses(initialPage);
 
     // Add event listeners for pagination buttons
     prevButton.addEventListener('click', () => loadCourses(currentPage - 1));
     nextButton.addEventListener('click', () => loadCourses(currentPage + 1));
+
+    // Listen for browser back/forward navigation events
+    window.addEventListener('popstate', function(event) {
+        if (event.state && event.state.page) {
+            loadCourses(event.state.page);
+        }
+    });
 });
