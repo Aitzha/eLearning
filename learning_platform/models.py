@@ -31,6 +31,9 @@ class Course(models.Model):
     description = models.TextField()
     teacher = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='courses_taught')
 
+    class Meta:
+        ordering = ['title']
+
     def __str__(self):
         return self.title
 
