@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 // Update pagination controls
-                pageInfo.textContent = `Page ${page} of ${Math.ceil(data.count / 10)}`;
+                pageInfo.textContent = `Page ${page} of ${Math.ceil(data.count / PAGE_SIZE)}`;
                 prevButton.disabled = !data.previous;
                 nextButton.disabled = !data.next;
 

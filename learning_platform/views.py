@@ -1,6 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
-from django.contrib.auth import logout
+from django.conf import settings
 
 
 def index(request):
@@ -23,4 +22,5 @@ def register(request):
 
 
 def courses(request):
-    return render(request, "courses.html")
+    page_size = settings.REST_FRAMEWORK['PAGE_SIZE']
+    return render(request, "courses.html", {'page_size': page_size})
