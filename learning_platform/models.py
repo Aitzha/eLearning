@@ -27,8 +27,8 @@ class UserProfile(models.Model):
 
 
 class Course(models.Model):
-    title = models.CharField(max_length=255)
-    description = models.TextField()
+    title = models.CharField(max_length=255, unique=True)
+    description = models.TextField(blank=True, null=True)
     teacher = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='courses_taught')
 
     class Meta:
