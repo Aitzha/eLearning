@@ -7,7 +7,7 @@ from rest_framework.authtoken.models import Token
 
 from .model_factories import UserProfileFactory, RoleFactory, UserFactory
 from .models import *
-from .units import user_has_permission
+from .units import user_has_permission, generate_random_password
 
 
 class UserViewAPITest(APITestCase):
@@ -142,24 +142,19 @@ class LogoutViewTest(APITestCase):
 
 class CourseCreateAPITests(APITestCase):
     def setUp(self):
-        """
-        Setup before every test
-        Preparations:
-            1) Get url to the endpoint
-            2) Get add course permission
-        """
+        """Simple Setup before every test"""
 
-        # URL used for tests
+        # Get URL
         self.url = reverse("api_course_create")
-
-        # Get "add_course" permission
-        self.add_course_perm = Permission.objects.get(codename='add_course')
 
     def test_create_course_with_permission(self):
         """
         Testing course creation with the appropriate permissions and valid data.
         Should succeed and create new course in database.
         """
+
+        # Get "add_course" permission
+        self.add_course_perm = Permission.objects.get(codename='add_course')
 
         # Create role and assign it to user profile
         teacher_role = RoleFactory.create(name="Teacher")
@@ -224,7 +219,10 @@ class CourseCreateAPITests(APITestCase):
 
 class PermissionUtilityTests(APITestCase):
     def test_user_has_permission_true(self):
-        """User with permission should return True"""
+        """
+        Testing user with permission
+        Should return True
+        """
 
         # Get "add_course" permission
         add_course_perm = Permission.objects.get(codename='add_course')
@@ -238,7 +236,10 @@ class PermissionUtilityTests(APITestCase):
         self.assertTrue(user_has_permission(teacher.user, 'add_course'))
 
     def test_user_has_permission_false(self):
-        """User without permission should return False"""
+        """
+        Testing user without permission
+        Should return False
+        """
 
         # Create role and assign it to user profile
         student_role = RoleFactory()
@@ -320,3 +321,14 @@ class CourseListPaginationAPITest(APITestCase):
 
             # Check response
             self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class PasswordUtilityTests(APITestCase):
+    def test_generate_password(self):
+        """
+        Testing random password generation
+        Should return random password of given length
+        """
+
+        password_len = 10
+        self.assertEqual(len(generate_random_password(password_len)), password_len)

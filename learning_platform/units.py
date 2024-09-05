@@ -1,3 +1,6 @@
+import secrets
+import string
+
 from learning_platform.models import UserProfile
 
 
@@ -17,3 +20,22 @@ def user_has_permission(user, perm_codename):
         return profile.role.permissions.filter(codename=perm_codename).exists()
     except UserProfile.DoesNotExist:
         return False
+
+
+def generate_random_password(length=12):
+    """
+    Generate a secure random password.
+
+    Args:
+        length (int): The length of the password to be generated
+
+    Returns:
+        str: The password of given length
+    """
+
+    # Add possible character for password in 'alphabet' variable (ASCII letters and digits)
+    alphabet = string.ascii_letters + string.digits
+
+    # Randomly choose characters from 'alphabet' using secrets module
+    return ''.join(secrets.choice(alphabet) for _ in range(length))
+

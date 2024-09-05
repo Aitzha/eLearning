@@ -8,8 +8,10 @@ urlpatterns = [
     path('api/register/', RegisterView.as_view(), name='api_register'),
     path('api/login/', LoginView.as_view(), name='api_login'),
     path('api/logout/', LogoutView.as_view(), name='api_logout'),
-    path('api/course/create', CourseCreateView.as_view(), name='api_course_create'),
+    path('api/course-create', CourseCreateView.as_view(), name='api_course_create'),
     path('api/courses/', CourseListView.as_view(), name='api_course_list'),
+
+    path('api/add-teacher', AddTeacherView.as_view(), name='api_add_teacher'),
 
     path('', index, name='index'),
     path('profile/', profile, name='profile'),
