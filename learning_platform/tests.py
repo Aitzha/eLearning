@@ -332,3 +332,111 @@ class PasswordUtilityTests(APITestCase):
 
         password_len = 10
         self.assertEqual(len(generate_random_password(password_len)), password_len)
+
+
+class AddTeacherAPITests(APITestCase):
+    def setUp(self):
+        """
+        Setup before every test
+        Preparations:
+            1) Get url to the endpoint
+            2) Add Teacher role
+            3) Get add user profile permission
+        """
+
+        # Get url
+        self.url = reverse('api_add_teacher')
+
+        # Set up roles
+        self.teacher_role = Role.objects.create(name="Teacher")
+
+        # Get add user profile permission
+        self.add_userprofile_perm = Permission.objects.get(codename='add_userprofile')
+
+    def test_create_teacher_successful(self):
+        """
+        Test teacher account creation with admin account
+        Should successfully create teacher account
+        """
+
+        # Create role and assign it to user profile
+        admin_role = Role.objects.create(name="Admin")
+        admin_role.permissions.add(self.add_userprofile_perm)
+        admin = UserProfileFactory.create(role=admin_role)
+
+        # Create and add credentials
+        token = Token.objects.create(user=admin.user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+        # Send request
+        response = self.client.post(self.url)
+
+        # Check the response
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIn('username', response.data)
+        self.assertIn('password', response.data)
+
+        # Check Database
+        new_teacher_username = response.data['username']
+        new_teacher = User.objects.get(username=new_teacher_username)
+        new_teacher_profile = UserProfile.objects.get(user=new_teacher)
+        self.assertTrue(new_teacher.username.startswith('teacher-'))
+        self.assertEqual(new_teacher.username, response.data['username'])
+        self.assertEqual(new_teacher_profile.role, self.teacher_role)
+
+    def test_create_teacher_permission_denied(self):
+        """
+        Test teacher account creation without admin account
+        Should forbid teacher account creation
+        """
+
+        # Create role and assign it to user profile
+        teacher = UserProfileFactory.create(role=self.teacher_role)
+
+        # Create and add credentials
+        token = Token.objects.create(user=teacher.user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+        # Send request
+        response = self.client.post(self.url)
+
+        # Check that permission is denied
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertIn('error', response.data)
+
+    def test_create_teacher_no_auth(self):
+        """
+        Test teacher account create unauthenticated
+        Should forbid teacher account creation
+        """
+
+        # Send request
+        response = self.client.post(self.url)
+
+        # Check that the request is unauthorized
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_create_teacher_no_teacher_role(self):
+        """
+        Test teacher creation when no teacher role exist
+        Should return bad request error
+        """
+
+        # Delete Teacher role
+        self.teacher_role.delete()
+
+        # Create role and assign it to user profile
+        admin_role = Role.objects.create(name="Admin")
+        admin_role.permissions.add(self.add_userprofile_perm)
+        admin = UserProfileFactory.create(role=admin_role)
+
+        # Create and add credentials
+        token = Token.objects.create(user=admin.user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+        # Send request
+        response = self.client.post(self.url)
+
+        # Check response
+        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        self.assertIn('error', response.data)

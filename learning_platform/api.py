@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate
+from django.db import transaction
 from rest_framework import status, views, generics
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -7,7 +8,7 @@ from rest_framework.authtoken.models import Token
 
 from .models import UserProfile
 from .serializers import *
-from .units import user_has_permission
+from .units import user_has_permission, generate_random_password
 
 
 class UserView(views.APIView):
@@ -85,3 +86,38 @@ class CourseListView(generics.ListAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
 
+
+class AddTeacherView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        # Check if the user has permission to create profiles (admin or similar)
+        if not user_has_permission(request.user, 'add_userprofile'):
+            return Response({'error': 'You do not have permission to add teachers.'}, status=status.HTTP_403_FORBIDDEN)
+
+        # Ensure the "Teacher" role exists
+        try:
+            teacher_role = Role.objects.get(name="Teacher")
+        except Role.DoesNotExist:
+            return Response({'error': 'Teacher role does not exist'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # Generate the username in the format "teacher-000-001"
+        current_teacher_count = UserProfile.objects.filter(role=teacher_role).count()
+        new_teacher_id = f"teacher-{str(current_teacher_count + 1).zfill(6)}"
+
+        # Password generation logic (you can choose to generate a random password or set a default)
+        password = generate_random_password(10)
+
+        # Create the new user with the generated username and password
+        try:
+            with transaction.atomic():
+                new_user = User.objects.create_user(username=new_teacher_id, password=password)
+                new_user_profile = UserProfile.objects.create(user=new_user, role=teacher_role)
+
+            return Response({
+                'username': new_user.username,
+                'password': password,
+                'message': 'Teacher created successfully.'
+            }, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
