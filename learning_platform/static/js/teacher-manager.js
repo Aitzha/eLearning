@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const prevButton = document.getElementById('prev-page');
     const nextButton = document.getElementById('next-page');
     const pageInfo = document.getElementById('page-info');
+    const token = localStorage.getItem('token');
+    const credentialBox = document.getElementById('credential-box');
 
     function loadTeachers(page = 1) {
         fetch(`/api/users?role=Teacher&page=${page}`)
@@ -37,15 +39,28 @@ document.addEventListener('DOMContentLoaded', function() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': 'Token ' + token
             },
         })
-        .then(response => response.json())
-        .then(data => {
-            if (response.ok) {
-                window.location.href = `/teacher/${data.username}/details`;
-            } else {
-                alert('Error creating teacher: ' + data.error);
+        .then(response => {
+            // Check if the response is OK and pass the data to the next .then() call
+            if (!response.ok) {
+                throw new Error('Failed to create teacher');
             }
+            return response.json();
+        })
+        .then(data => {
+            // Display the credentials at the top of the page in the credential box
+            credentialBox.innerHTML = `
+                <div class="credential-box">
+                    <p><strong>New Teacher Created!</strong></p>
+                    <p>Username: ${data.username}</p>
+                    <p>Password: ${data.password}</p>
+                </div>
+            `;
+
+            // Reload the teacher list to include the new teacher
+            loadTeachers(currentPage);
         })
         .catch(error => console.error('Error creating teacher:', error));
     });

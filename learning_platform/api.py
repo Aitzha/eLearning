@@ -125,7 +125,6 @@ class AddTeacherView(views.APIView):
             return Response({
                 'username': new_user.username,
                 'password': password,
-                'message': 'Teacher created successfully.'
             }, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -135,7 +134,7 @@ class UserListView(generics.ListAPIView):
     serializer_class = UserSerializer
 
     def get_queryset(self):
-        queryset = User.objects.all().order_by('username')
+        queryset = User.objects.all().order_by('-username')
         role_name = self.request.query_params.get('role', None)
         username = self.request.query_params.get('username', None)
 
