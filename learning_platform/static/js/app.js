@@ -8,14 +8,23 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(user => {
+            let dropdownContent = '<a href="/profile">Profile</a>';
+
+            // Check if the user has the 'add_userprofile' permission
+            if (user.perms && user.perms.includes('add_userprofile')) {
+                dropdownContent += '<a href="/teacher-manager">Teacher Manager</a>';
+            }
+
+            dropdownContent += '<a href="#" onclick="logout()" style="color: red;">Logout</a>'
+
             userMenu.innerHTML = `
                 <div class="dropdown">
                     <button class="dropbtn">${user.username}</button>
                     <div class="dropdown-content">
-                        <a href="/profile">Profile</a>
-                        <a href="#" onclick="logout()" style="color: red;">Logout</a>
+                        ${dropdownContent}
                     </div>
-                </div>`;
+                </div>
+            `;
         });
     } else {
         userMenu.innerHTML = '<a href="/login">Sign In/Sign Up</a>';

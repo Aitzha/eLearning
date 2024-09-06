@@ -16,7 +16,15 @@ class UserView(views.APIView):
 
     def get(self, request):
         serializer = UserProfilePublicSerializer(request.user.profile)
-        return Response(serializer.data)
+
+        response_content = serializer.data
+
+        try:
+            user_profile = UserProfile.objects.get(user=request.user)
+            response_content['perms'] = [perm.codename for perm in user_profile.role.permissions.all()]
+            return Response(response_content)
+        except UserProfile.DoesNotExist:
+            return Response({'error': 'User profile not found'}, status=500)
 
 
 class ProfileView(views.APIView):
@@ -121,3 +129,26 @@ class AddTeacherView(views.APIView):
             }, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserListView(generics.ListAPIView):
+    serializer_class = UserSerializer
+
+    def get_queryset(self):
+        queryset = User.objects.all().order_by('username')
+        role_name = self.request.query_params.get('role', None)
+        username = self.request.query_params.get('username', None)
+
+        # Filter by role if specified
+        if role_name:
+            try:
+                role = Role.objects.get(name=role_name)
+                queryset = queryset.filter(profile__role=role)
+            except Role.DoesNotExist:
+                return User.objects.none()
+
+        # Filter by username if specified
+        if username:
+            queryset = queryset.filter(username__icontains=username)
+
+        return queryset

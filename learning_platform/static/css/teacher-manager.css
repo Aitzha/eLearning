@@ -1,0 +1,60 @@
+/* Teacher Manager page styles */
+.teacher-list {
+    width: 80%;
+    margin: 20px auto;
+    text-align: center;
+}
+
+.teacher-list h2 {
+    margin-bottom: 20px;
+}
+
+.teacher {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 10px;
+    text-align: left;
+    font-size: 18px;
+}
+
+#add-teacher-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#add-teacher-btn:hover {
+    background-color: #45a049;
+}
+
+#pagination-controls {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+#pagination-controls button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#pagination-controls button[disabled] {
+    background-color: #d6d6d6;
+    cursor: not-allowed;
+}
+
+#pagination-controls span {
+    font-size: 16px;
+    margin: 0 10px;
+    align-self: center;
+}

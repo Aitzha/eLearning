@@ -12,10 +12,12 @@ urlpatterns = [
     path('api/courses', CourseListView.as_view(), name='api_course_list'),
 
     path('api/add-teacher', AddTeacherView.as_view(), name='api_add_teacher'),
+    path('api/users', UserListView.as_view(), name='api_users_list'),
 
     path('', index, name='index'),
     path('profile', profile, name='profile'),
     path('login', login, name='login'),
     path('register', register, name='register'),
-    path('courses', courses, name='courses')
+    path('courses', course_list, name='courses'),
+    path('teacher-manager', teacher_manager, name='teacher-manager')
 ]

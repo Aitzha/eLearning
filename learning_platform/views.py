@@ -21,6 +21,11 @@ def register(request):
     return render(request, 'registration.html')
 
 
-def courses(request):
+def course_list(request):
     page_size = settings.REST_FRAMEWORK['PAGE_SIZE']
     return render(request, "courses.html", {'page_size': page_size})
+
+
+def teacher_manager(request):
+    page_size = settings.REST_FRAMEWORK['PAGE_SIZE']
+    return render(request, "teacher-manager.html", {'page_size': page_size})

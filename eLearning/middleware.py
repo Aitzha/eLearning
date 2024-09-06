@@ -10,6 +10,10 @@ class RemoveSlashMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        # Skip URL paths that start with '/admin' or are the root path
+        if request.path_info.startswith('/admin') or request.path_info == '/':
+            return self.get_response(request)
+
         # Check if the path ends with a slash and is not the root path
         if request.path_info != '/' and request.path_info.endswith('/'):
             # Redirect to the URL without the trailing slash
