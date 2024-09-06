@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block content %}
+    <div class="teacher-list">
+        <h2>Teachers</h2>
+        <button id="add-teacher-btn">Add New Teacher</button>
+        <div id="teacher-container"></div>
+        <div id="pagination-controls">
+            <button id="prev-page" disabled>Previous</button>
+            <span id="page-info"></span>
+            <button id="next-page">Next</button>
+        </div>
+    </div>
+
+    <script src="{% static 'js/profile.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}

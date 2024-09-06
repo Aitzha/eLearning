@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const initialPage = parseInt(urlParams.get('page')) || 1;
 
     function loadCourses(page) {
-        fetch(`/api/courses/?page=${page}`)
+        fetch(`/api/courses?page=${page}`)
             .then(response => response.json())
             .then(data => {
                 courseContainer.innerHTML = '';

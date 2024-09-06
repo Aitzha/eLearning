@@ -2,8 +2,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const successMessage = document.getElementById('success-message');
     const successText = localStorage.getItem('registrationSuccess');
     if (successText) {
-        console.log(successText)
-        console.log("I was here")
         successMessage.textContent = successText;
         localStorage.removeItem('registrationSuccess');
     }

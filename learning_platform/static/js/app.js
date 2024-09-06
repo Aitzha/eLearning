@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const token = localStorage.getItem('token');
 
     if (token) {
-        fetch('/api/user/', {
+        fetch('/api/user', {
             headers: { 'Authorization': 'Token ' + token }
         })
         .then(response => response.json())
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function logout() {
-    fetch('/api/logout/', {
+    fetch('/api/logout', {
         method: 'POST',
         headers: {
             'Authorization': 'Token ' + localStorage.getItem('token'),

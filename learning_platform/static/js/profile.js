@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const token = localStorage.getItem('token');
     if (token) {
-        fetch('/api/profile/', {
+        fetch('/api/profile', {
             method: 'GET',
             headers: {
                 'Authorization': 'Token ' + token,
