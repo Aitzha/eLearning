@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate
 from django.db import transaction
 from rest_framework import status, views, generics
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.authentication import TokenAuthentication
@@ -199,7 +200,7 @@ class CourseDetailAPIView(views.APIView):
                         'title': section.title,
                         'materials': [
                             {'type': material.type, 'content': material.content}
-                            for material in section.materials.all()
+                            for material in section.content_items.all()
                         ]
                     }
                     for section in sections
@@ -208,3 +209,100 @@ class CourseDetailAPIView(views.APIView):
             return Response(course_data)
         except Course.DoesNotExist:
             return Response({'error': 'Course not found'}, status=404)
+
+
+class SectionManagementAPIView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, course_id):
+        try:
+            course = Course.objects.get(id=course_id)
+            section = Section.objects.create(
+                title=request.data['title'],
+                course=course,
+                order=request.data.get('order', 0)
+            )
+            return Response({'success': True, 'section_id': section.id}, status=201)
+        except Course.DoesNotExist:
+            return Response({'error': 'You are not the course creator.'}, status=403)
+
+    def put(self, request, section_id):
+        try:
+            section = Section.objects.get(id=section_id, course__teacher=request.user)
+            section.title = request.data.get('title', section.title)
+            section.order = request.data.get('order', section.order)
+            section.save()
+            return Response({'success': True}, status=200)
+        except Section.DoesNotExist:
+            return Response({'error': 'Section not found or you are not the course creator.'}, status=404)
+
+    def delete(self, request, section_id):
+        try:
+            section = Section.objects.get(id=section_id, course__teacher=request.user)
+            section.delete()
+            return Response({'success': True}, status=200)
+        except Section.DoesNotExist:
+            return Response({'error': 'Section not found or you are not the course creator.'}, status=404)
+
+
+class ContentItemManagementAPIView(views.APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]  # Allows handling file uploads
+
+    def post(self, request, section_id):
+        try:
+            section = Section.objects.get(id=section_id, course__teacher=request.user)
+
+            # Determine whether it's a video or file
+            content_type = request.data.get('content_type')
+            title = request.data.get('title')
+            order = request.data.get('order', 0)
+
+            if content_type == 'video':
+                video_url = request.data.get('video_url')
+                content_item = ContentItem.objects.create(
+                    section=section,
+                    title=title,
+                    content_type='video',
+                    video_url=video_url,
+                    order=order
+                )
+            elif content_type == 'pdf':
+                file = request.FILES.get('file')
+                content_item = ContentItem.objects.create(
+                    section=section,
+                    title=title,
+                    content_type='pdf',
+                    file=file,
+                    order=order
+                )
+            else:
+                return Response({'error': 'Invalid content type'}, status=400)
+
+            return Response({'success': True, 'content_id': content_item.id}, status=201)
+        except Section.DoesNotExist:
+            return Response({'error': 'Section not found or you are not the course creator.'}, status=404)
+
+    def put(self, request, content_id):
+        try:
+            content_item = ContentItem.objects.get(id=content_id, section__course__teacher=request.user)
+            content_item.title = request.data.get('title', content_item.title)
+            content_item.order = request.data.get('order', content_item.order)
+
+            if content_item.content_type == 'video':
+                content_item.video_url = request.data.get('video_url', content_item.video_url)
+            elif content_item.content_type == 'pdf':
+                content_item.file = request.FILES.get('file', content_item.file)
+
+            content_item.save()
+            return Response({'success': True}, status=200)
+        except ContentItem.DoesNotExist:
+            return Response({'error': 'Content item not found or you are not the course creator.'}, status=404)
+
+    def delete(self, request, content_id):
+        try:
+            content_item = ContentItem.objects.get(id=content_id, section__course__teacher=request.user)
+            content_item.delete()
+            return Response({'success': True}, status=200)
+        except ContentItem.DoesNotExist:
+            return Response({'error': 'Content item not found or you are not the course creator.'}, status=404)

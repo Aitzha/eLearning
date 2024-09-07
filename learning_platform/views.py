@@ -37,3 +37,7 @@ def course_create(request):
 
 def course_details(request, course_id):
     return render(request, 'course-details.html', {'course_id': course_id})
+
+
+def course_edit_view(request, course_id):
+    return render(request, 'course-edit.html', {'course_id': course_id})

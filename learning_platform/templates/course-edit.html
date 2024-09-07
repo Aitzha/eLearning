@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Course{% endblock %}
+
+{% block content %}
+    <div class="course-edit-page">
+        <h1>Edit Course</h1>
+        <h2 id="course-title"></h2>
+
+        <!-- Section management -->
+        <div id="sections-container">
+            <!-- Dynamically populated with sections -->
+        </div>
+
+        <!-- Button to add new section -->
+        <button id="add-section-btn">Add New Section</button>
+
+        <!-- Button to save the section order -->
+        <button id="save-section-order-btn">Save Section Order</button>
+    </div>
+
+    <script src="{% static 'js/course-edit.js' %}"></script>
+{#    <link rel="stylesheet" href="{% static 'css/course-details.css' %}">#}
+{% endblock %}
