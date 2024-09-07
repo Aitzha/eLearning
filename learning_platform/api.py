@@ -218,10 +218,15 @@ class SectionManagementAPIView(views.APIView):
     def post(self, request, course_id):
         try:
             course = Course.objects.get(id=course_id)
+
+            # Get the highest order of the existing sections in this course
+            max_order = Section.objects.filter(course=course).aggregate(max_order=models.Max('order'))['max_order']
+            new_order = (max_order or 0) + 1
+
             section = Section.objects.create(
                 title=request.data['title'],
                 course=course,
-                order=request.data.get('order', 0)
+                order=new_order
             )
             return Response({'success': True, 'section_id': section.id}, status=201)
         except Course.DoesNotExist:
@@ -229,7 +234,7 @@ class SectionManagementAPIView(views.APIView):
 
     def put(self, request, section_id):
         try:
-            section = Section.objects.get(id=section_id, course__teacher=request.user)
+            section = Section.objects.get(id=section_id)
             section.title = request.data.get('title', section.title)
             section.order = request.data.get('order', section.order)
             section.save()
