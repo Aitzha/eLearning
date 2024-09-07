@@ -28,6 +28,8 @@ document.addEventListener('DOMContentLoaded', function() {
             data.sections.forEach(section => {
                 const sectionDiv = document.createElement('div');
                 sectionDiv.classList.add('section');
+                sectionDiv.setAttribute('data-section-id', section.id);  // Add section ID to the div
+
                 sectionDiv.innerHTML = `
                     <h3 contenteditable="true">${section.title}</h3>
                     <button class="delete-section-btn" data-section-id="${section.id}">Delete Section</button>
@@ -38,36 +40,44 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
                 sectionsContainer.appendChild(sectionDiv);
 
-                // Load content items if they exist
-                if (section.content_items && Array.isArray(section.content_items)) {
-                    section.content_items.forEach(contentItem => {
-                        const contentDiv = document.createElement('div');
-                        contentDiv.classList.add('content-item');
-                        contentDiv.innerHTML = `
-                            <p>${contentItem.title}</p>
-                            ${contentItem.content_type === 'video' ? `<iframe src="${contentItem.video_url}" frameborder="0" allowfullscreen></iframe>` : ''}
-                            ${contentItem.content_type === 'pdf' ? `<a href="${contentItem.file}" target="_blank">Download PDF</a>` : ''}
-                            <button class="delete-content-btn" data-content-id="${contentItem.id}">Delete Content</button>
-                        `;
-                        sectionDiv.querySelector('.materials-container').appendChild(contentDiv);
-                    });
-                }
+                // Add delete section functionality
+                sectionDiv.querySelector('.delete-section-btn').addEventListener('click', function() {
+                    deleteSection(section.id, sectionDiv);
+                });
             });
-        } else {
-            console.warn('No sections found for this course.');
         }
     })
     .catch(error => {
         console.error('Error fetching course details:', error);
     });
 
-        // Add new section event listener
+    // Function to delete a section
+    function deleteSection(sectionId, sectionDiv) {
+        if (confirm('Are you sure you want to delete this section?')) {
+            fetch(`/api/sections/${sectionId}/`, {
+                method: 'DELETE',
+                headers: { 'Authorization': 'Token ' + token }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to delete section');
+                }
+                // Remove the section from the DOM
+                sectionDiv.remove();
+            })
+            .catch(error => {
+                console.error('Error deleting section:', error);
+            });
+        }
+    }
+
+    // Add new section event listener
     const addSectionButton = document.getElementById('add-section-btn');
     addSectionButton.addEventListener('click', function() {
         const newSectionTitle = prompt('Enter the new section title:');  // Prompt the user for a section title
         if (newSectionTitle) {
             // Make a POST request to the API to add a new section
-            fetch(`/api/courses/${courseId}/sections`, {
+            fetch(`/api/courses/${courseId}/sections/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

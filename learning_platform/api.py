@@ -197,6 +197,7 @@ class CourseDetailAPIView(views.APIView):
                 sections = course.sections.all()  # Assuming course has related sections
                 course_data['sections'] = [
                     {
+                        'id': section.id,
                         'title': section.title,
                         'materials': [
                             {'type': material.type, 'content': material.content}
@@ -238,7 +239,7 @@ class SectionManagementAPIView(views.APIView):
 
     def delete(self, request, section_id):
         try:
-            section = Section.objects.get(id=section_id, course__teacher=request.user)
+            section = Section.objects.get(id=section_id)
             section.delete()
             return Response({'success': True}, status=200)
         except Section.DoesNotExist:
