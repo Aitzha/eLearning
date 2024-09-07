@@ -249,7 +249,7 @@ class SectionManagementAPIView(views.APIView):
 
     def delete(self, request, section_id):
         try:
-            section = Section.objects.get(id=section_id, course__teacher=request.user)
+            section = Section.objects.get(id=section_id)
 
             # Update the linked list pointers
             previous_section = section.previous_section
@@ -326,7 +326,7 @@ class ContentItemManagementAPIView(views.APIView):
 
     def put(self, request, content_id):
         try:
-            content_item = ContentItem.objects.get(id=content_id, section__course__teacher=request.user)
+            content_item = ContentItem.objects.get(id=content_id)
             content_item.title = request.data.get('title', content_item.title)
             content_item.order = request.data.get('order', content_item.order)
 
@@ -342,7 +342,7 @@ class ContentItemManagementAPIView(views.APIView):
 
     def delete(self, request, content_id):
         try:
-            content_item = ContentItem.objects.get(id=content_id, section__course__teacher=request.user)
+            content_item = ContentItem.objects.get(id=content_id)
             content_item.delete()
             return Response({'success': True}, status=200)
         except ContentItem.DoesNotExist:

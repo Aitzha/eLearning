@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(data => {
-            window.location.href = `/sections/${sectionId}/content/`;  // Redirect back to content management page
+            window.location.href = `/sections/${sectionId}/edit`;  // Redirect back to content management page
         })
         .catch(error => {
             console.error('Error adding content:', error);
