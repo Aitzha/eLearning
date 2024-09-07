@@ -6,13 +6,11 @@
 {% block content %}
     <div class="content-management-page">
         <h1>Manage Content for Section</h1>
-        <div id="content-items-container">
-            <!-- List of content items will be dynamically populated here -->
-        </div>
+        <div id="content-items-container"></div>
 
-        <!-- Button to add new content -->
         <button id="add-content-btn">Add New Content</button>
     </div>
 
     <script src="{% static 'js/content-manage.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/content-manage.css' %}">
 {% endblock %}

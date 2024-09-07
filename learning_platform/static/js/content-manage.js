@@ -13,8 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
             contentDiv.classList.add('content-item');
             contentDiv.innerHTML = `
                 <p>${contentItem.title}</p>
-                ${contentItem.content_type === 'video' ? `<iframe src="${contentItem.video_url}" frameborder="0" allowfullscreen></iframe>` : ''}
-                ${contentItem.content_type === 'pdf' ? `<a href="${contentItem.file}" target="_blank">Download PDF</a>` : ''}
+                <span class="content-type">${contentItem.content_type.toUpperCase()}</span>
                 <button class="modify-content-btn" data-content-id="${contentItem.id}">Modify</button>
                 <button class="delete-content-btn" data-content-id="${contentItem.id}">Delete</button>
             `;
