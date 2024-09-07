@@ -200,7 +200,7 @@ class CourseDetailAPIView(views.APIView):
                         'id': section.id,
                         'title': section.title,
                         'materials': [
-                            {'type': material.type, 'content': material.content}
+                            {'type': material.content_type}
                             for material in section.content_items.all()
                         ]
                     }
@@ -322,3 +322,17 @@ class ContentItemManagementAPIView(views.APIView):
             return Response({'success': True}, status=200)
         except ContentItem.DoesNotExist:
             return Response({'error': 'Content item not found or you are not the course creator.'}, status=404)
+
+
+class MoveSectionAPIView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, section_id):
+        direction = request.data.get('direction')
+        section = Section.objects.get(id=section_id)
+        if direction == 'up':
+            section.order -= 1  # Move up in the order
+        elif direction == 'down':
+            section.order += 1  # Move down in the order
+        section.save()
+        return Response({'success': True})

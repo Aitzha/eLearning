@@ -23,6 +23,7 @@ urlpatterns = [
     # API endpoints to manage content items (create, update, delete)
     path('api/sections/<int:section_id>/content-items', ContentItemManagementAPIView.as_view(), name='content-item-create'),
     path('api/content-items/<int:content_id>', ContentItemManagementAPIView.as_view(), name='content-item-manage'),
+    path('api/sections/<int:section_id>/move', MoveSectionAPIView.as_view(), name='section-move'),
 
     # Frontend page for teachers to edit their course
     path('courses/<int:course_id>/edit', course_edit, name='course-edit'),

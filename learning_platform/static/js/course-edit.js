@@ -1,88 +1,94 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const token = localStorage.getItem('token');  // Get the token from localStorage
+    const token = localStorage.getItem('token');
+    const courseId = window.location.pathname.split('/')[2];  // Assuming URL is /courses/<course_id>/edit/
 
-    // If no token is found, redirect to the login page
-    if (!token) {
-        window.location.href = '/login';  // Redirect to login if the user is not authenticated
-    }
-
-    // Correctly extract the course ID from the URL (second-to-last part of the path)
-    const urlParts = window.location.pathname.split('/');
-    const courseId = urlParts[urlParts.length - 2];  // This grabs '1' from '/courses/1/edit/'
-
-    fetch(`/api/courses/${courseId}/`, {
+    fetch(`/api/courses/${courseId}`, {
         headers: { 'Authorization': 'Token ' + token }
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to fetch course details');
-        }
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
-        document.getElementById('course-title').textContent = data.title;
+        const sectionsContainer = document.getElementById('sections-container');
+        data.sections.forEach((section, index) => {
+            const sectionDiv = document.createElement('div');
+            sectionDiv.classList.add('section-item');
+            sectionDiv.innerHTML = `
+                <p>${section.title}</p>
+                <div>
+                    <button class="move-up-btn" data-section-id="${section.id}">Up</button>
+                    <button class="move-down-btn" data-section-id="${section.id}">Down</button>
+                    <button class="modify-section-btn" data-section-id="${section.id}">Modify</button>
+                    <button class="delete-section-btn" data-section-id="${section.id}">Delete</button>
+                </div>
+            `;
+            sectionsContainer.appendChild(sectionDiv);
 
-        // Check if 'sections' exists before accessing it
-        if (data.sections && Array.isArray(data.sections)) {
-            const sectionsContainer = document.getElementById('sections-container');
-            data.sections.forEach(section => {
-                const sectionDiv = document.createElement('div');
-                sectionDiv.classList.add('section');
-                sectionDiv.setAttribute('data-section-id', section.id);  // Add section ID to the div
-
-                sectionDiv.innerHTML = `
-                    <h3 contenteditable="true">${section.title}</h3>
-                    <button class="delete-section-btn" data-section-id="${section.id}">Delete Section</button>
-                    <div class="materials-container" data-section-id="${section.id}">
-                        <!-- Content items will go here -->
-                    </div>
-                    <button class="manage-content-btn" data-section-id="${section.id}">Manage Content</button>
-                `;
-                sectionsContainer.appendChild(sectionDiv);
-
-                // Add delete section functionality
-                sectionDiv.querySelector('.delete-section-btn').addEventListener('click', function() {
-                    deleteSection(section.id, sectionDiv);
-                });
-
-                // Redirect to content management page on clicking "Add Content"
-                sectionDiv.querySelector('.manage-content-btn').addEventListener('click', function() {
-                    window.location.href = `/sections/${section.id}/content/`;  // Redirect to content management page
-                });
+            // Move section up
+            sectionDiv.querySelector('.move-up-btn').addEventListener('click', function() {
+                moveSection(section.id, 'up');
             });
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching course details:', error);
+
+            // Move section down
+            sectionDiv.querySelector('.move-down-btn').addEventListener('click', function() {
+                moveSection(section.id, 'down');
+            });
+
+            // Modify section listener
+            sectionDiv.querySelector('.modify-section-btn').addEventListener('click', function() {
+                const newTitle = prompt('Enter new section title:', section.title);
+                if (newTitle) {
+                    modifySection(section.id, newTitle);
+                }
+            });
+
+            // Delete section listener
+            sectionDiv.querySelector('.delete-section-btn').addEventListener('click', function() {
+                if (confirm('Are you sure you want to delete this section?')) {
+                    deleteSection(section.id);
+                }
+            });
+        });
     });
 
+    // Function to move a section
+    function moveSection(sectionId, direction) {
+        fetch(`/api/sections/${sectionId}/move`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + token
+            },
+            body: JSON.stringify({ direction })
+        })
+        .then(() => location.reload());  // Reload the page after moving section
+    }
+
+    // Function to modify a section
+    function modifySection(sectionId, newTitle) {
+        fetch(`/api/sections/${sectionId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + token
+            },
+            body: JSON.stringify({ title: newTitle })
+        })
+        .then(() => location.reload());  // Reload the page after modifying the section
+    }
+
     // Function to delete a section
-    function deleteSection(sectionId, sectionDiv) {
-        if (confirm('Are you sure you want to delete this section?')) {
-            fetch(`/api/sections/${sectionId}/`, {
-                method: 'DELETE',
-                headers: { 'Authorization': 'Token ' + token }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to delete section');
-                }
-                // Remove the section from the DOM
-                sectionDiv.remove();
-            })
-            .catch(error => {
-                console.error('Error deleting section:', error);
-            });
-        }
+    function deleteSection(sectionId) {
+        fetch(`/api/sections/${sectionId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': 'Token ' + token }
+        })
+        .then(() => location.reload());  // Reload the page after deleting the section
     }
 
     // Add new section event listener
-    const addSectionButton = document.getElementById('add-section-btn');
-    addSectionButton.addEventListener('click', function() {
-        const newSectionTitle = prompt('Enter the new section title:');  // Prompt the user for a section title
+    document.getElementById('add-section-btn').addEventListener('click', function() {
+        const newSectionTitle = prompt('Enter the new section title:');
         if (newSectionTitle) {
-            // Make a POST request to the API to add a new section
-            fetch(`/api/courses/${courseId}/sections/`, {
+            fetch(`/api/courses/${courseId}/sections`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -90,19 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify({ title: newSectionTitle, order: 0 })
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to add section');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Reload the page after successfully adding the section
-                location.reload();  // Refresh the page to show the new section
-            })
-            .catch(error => {
-                console.error('Error adding section:', error);
-            });
+            .then(() => location.reload());  // Reload the page after adding the section
         }
     });
 });
