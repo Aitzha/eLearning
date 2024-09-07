@@ -250,6 +250,24 @@ class ContentItemManagementAPIView(views.APIView):
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]  # Allows handling file uploads
 
+    def get(self, request, section_id):
+        try:
+            section = Section.objects.get(id=section_id)
+            content_items = ContentItem.objects.filter(section=section)
+            content_items_data = [
+                {
+                    'id': content_item.id,
+                    'title': content_item.title,
+                    'content_type': content_item.content_type,
+                    'file': content_item.file.url if content_item.file else None,
+                    'video_url': content_item.video_url
+                }
+                for content_item in content_items
+            ]
+            return Response({'content_items': content_items_data}, status=200)
+        except Section.DoesNotExist:
+            return Response({'error': 'Section not found.'}, status=404)
+
     def post(self, request, section_id):
         try:
             section = Section.objects.get(id=section_id, course__teacher=request.user)
