@@ -25,6 +25,7 @@ class UserProfile(models.Model):
             ("delete_own_userprofile", "Can delete own user profile")
         ]
 
+
 class Course(models.Model):
     title = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True, null=True)
@@ -40,7 +41,7 @@ class Course(models.Model):
 class Section(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='sections')
     title = models.CharField(max_length=255)
-    description = models.TextField()
+    order = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.title
@@ -52,6 +53,7 @@ class ContentItem(models.Model):
     content_type = models.CharField(max_length=50)  # e.g., 'video', 'pdf'
     file = models.FileField(upload_to='content_files/', blank=True, null=True)  # For PDFs or other documents
     video_url = models.URLField(blank=True, null=True)  # For YouTube videos link
+    order = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.title
