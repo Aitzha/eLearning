@@ -39,6 +39,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add new content event listener
     document.getElementById('add-content-btn').addEventListener('click', function() {
-        window.location.href = `/sections/${sectionId}/content/new/`;  // Redirect to add new content page
+        window.location.href = `/content/${sectionId}/create`;  // Redirect to add new content page
     });
 });

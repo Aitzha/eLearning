@@ -44,7 +44,7 @@ def course_edit(request, course_id):
 
 
 def section_edit(request, section_id):
-    return render(request, 'content-manage.html', {'section_id': section_id})
+    return render(request, 'section-edit.html', {'section_id': section_id})
 
 
 def add_content(request, section_id):
