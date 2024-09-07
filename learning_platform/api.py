@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate
 from django.db import transaction
 from rest_framework import status, views, generics
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
 
@@ -171,3 +171,40 @@ class UserCoursesAPIView(views.APIView):
             })
         except UserProfile.DoesNotExist:
             return Response({'error': 'User profile not found'}, status=404)
+
+
+class CourseDetailAPIView(views.APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get(self, request, course_id):
+        try:
+            course = Course.objects.get(id=course_id)
+            user_is_creator = course.teacher == request.user.profile if request.user.is_authenticated else False
+            user_is_enrolled = Enrollment.objects.filter(course=course, student=request.user).exists() if request.user.is_authenticated else False
+
+            # Prepare the basic course details (available to everyone)
+            course_data = {
+                'title': course.title,
+                'description': course.description,
+                'teacher': course.teacher.user.username,
+                'user_is_creator': user_is_creator,
+                'user_is_enrolled': user_is_enrolled
+            }
+
+            # Only include sections and materials if the user is enrolled or the creator
+            if user_is_creator or user_is_enrolled:
+                sections = course.sections.all()  # Assuming course has related sections
+                course_data['sections'] = [
+                    {
+                        'title': section.title,
+                        'materials': [
+                            {'type': material.type, 'content': material.content}
+                            for material in section.materials.all()
+                        ]
+                    }
+                    for section in sections
+                ]
+
+            return Response(course_data)
+        except Course.DoesNotExist:
+            return Response({'error': 'Course not found'}, status=404)

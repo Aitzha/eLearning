@@ -33,3 +33,7 @@ def teacher_manager(request):
 
 def course_create(request):
     return render(request, 'course-create.html')
+
+
+def course_details(request, course_id):
+    return render(request, 'course-details.html', {'course_id': course_id})

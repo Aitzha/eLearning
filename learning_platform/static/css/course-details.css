@@ -1,0 +1,37 @@
+.course-detail-page {
+    width: 80%;
+    margin: 20px auto;
+}
+
+.section {
+    margin-bottom: 15px;
+}
+
+.collapsible {
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 16px;
+}
+
+.collapsible:after {
+    content: '\002B';  /* Plus symbol */
+    color: white;
+    float: right;
+}
+
+.active:after {
+    content: '\2212';  /* Minus symbol */
+}
+
+.content {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #f1f1f1;
+}

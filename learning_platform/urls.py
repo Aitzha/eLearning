@@ -11,6 +11,7 @@ urlpatterns = [
     path('api/course-create', CourseCreateView.as_view(), name='api_course_create'),
     path('api/courses', CourseListView.as_view(), name='api_course_list'),
     path('api/user-courses', UserCoursesAPIView.as_view(), name='api_user-courses'),
+    path('api/courses/<int:course_id>', CourseDetailAPIView.as_view(), name='api_course_detail'),
 
     path('api/add-teacher', AddTeacherView.as_view(), name='api_add_teacher'),
     path('api/users', UserListView.as_view(), name='api_users_list'),
@@ -21,5 +22,6 @@ urlpatterns = [
     path('register', register, name='register'),
     path('courses', course_list, name='courses'),
     path('teacher-manager', teacher_manager, name='teacher-manager'),
-    path('courses/create', course_create, name='course-create')
+    path('courses/create', course_create, name='course-create'),
+    path('courses/<int:course_id>', course_details, name='course-details'),
 ]

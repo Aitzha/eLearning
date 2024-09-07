@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Course Details{% endblock %}
+
+{% block content %}
+    <div class="course-detail-page">
+        <h1 id="course-title"></h1>
+        <p id="course-description"></p>
+        <p><strong>Teacher:</strong> <span id="teacher-name"></span></p>
+
+        <!-- Button to enroll/withdraw -->
+        <div id="enroll-withdraw-button"></div>
+
+        <h2>Course Sections</h2>
+        <div id="sections-container">
+            <!-- Sections will be dynamically added here -->
+        </div>
+    </div>
+
+    <script src="{% static 'js/course-details.js' %}"></script>
+        <link rel="stylesheet" href="{% static 'css/course-details.css' %}">
+{% endblock %}
