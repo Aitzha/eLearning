@@ -29,3 +29,7 @@ def course_list(request):
 def teacher_manager(request):
     page_size = settings.REST_FRAMEWORK['PAGE_SIZE']
     return render(request, "teacher-manager.html", {'page_size': page_size})
+
+
+def course_create(request):
+    return render(request, 'course-create.html')

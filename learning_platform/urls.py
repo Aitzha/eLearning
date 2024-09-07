@@ -10,7 +10,7 @@ urlpatterns = [
     path('api/logout', LogoutView.as_view(), name='api_logout'),
     path('api/course-create', CourseCreateView.as_view(), name='api_course_create'),
     path('api/courses', CourseListView.as_view(), name='api_course_list'),
-    path('api/user-courses', UserCoursesAPIView.as_view(), name='user-courses'),
+    path('api/user-courses', UserCoursesAPIView.as_view(), name='api_user-courses'),
 
     path('api/add-teacher', AddTeacherView.as_view(), name='api_add_teacher'),
     path('api/users', UserListView.as_view(), name='api_users_list'),
@@ -20,5 +20,6 @@ urlpatterns = [
     path('login', login, name='login'),
     path('register', register, name='register'),
     path('courses', course_list, name='courses'),
-    path('teacher-manager', teacher_manager, name='teacher-manager')
+    path('teacher-manager', teacher_manager, name='teacher-manager'),
+    path('courses/create', course_create, name='course-create')
 ]

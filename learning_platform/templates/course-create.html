@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create New Course{% endblock %}
+
+{% block content %}
+    <div class="course-create-page">
+        <h2>Create New Course</h2>
+        <form id="course-create-form">
+            <div class="form-group">
+                <label for="title">Course Title</label>
+                <input type="text" id="title" name="title" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Course Description</label>
+                <textarea id="description" name="description" class="form-control" rows="5" required></textarea>
+            </div>
+            <div id="error-message" class="error-message"></div>
+            <button type="submit" class="btn btn-primary">Create Course</button>
+        </form>
+    </div>
+
+    <script src="{% static 'js/course-create.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/course-create.css' %}">
+{% endblock %}

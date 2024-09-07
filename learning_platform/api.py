@@ -80,7 +80,7 @@ class CourseCreateView(views.APIView):
             return Response({'error': 'You do not have permission to add courses.'}, status=status.HTTP_403_FORBIDDEN)
 
         # Set the teacher to the current user
-        data['teacher'] = request.user.id
+        data['teacher'] = request.user.profile.id
 
         serializer = CourseSerializer(data=data)
         if serializer.is_valid():
