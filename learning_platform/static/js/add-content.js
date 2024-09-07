@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const videoUrlField = document.getElementById('video-url-field');
     const fileField = document.getElementById('file-field');
 
-    contentTypeField.addEventListener('change', function() {
+    function toggleFields() {
         if (contentTypeField.value === 'video') {
             videoUrlField.style.display = 'block';
             fileField.style.display = 'none';
@@ -15,7 +15,10 @@ document.addEventListener('DOMContentLoaded', function() {
             videoUrlField.style.display = 'none';
             fileField.style.display = 'block';
         }
-    });
+    }
+
+    toggleFields();
+    contentTypeField.addEventListener('change', toggleFields);
 
     // Handle form submission
     document.getElementById('add-content-form').addEventListener('submit', function(event) {
