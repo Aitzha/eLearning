@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Add New Content{% endblock %}
+
+{% block content %}
+    <div class="add-content-page">
+        <h1>Add New Content</h1>
+        <form id="add-content-form">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" required>
+
+            <label for="content_type">Content Type</label>
+            <select id="content_type" name="content_type">
+                <option value="video">Video</option>
+                <option value="pdf">PDF</option>
+            </select>
+
+            <div id="video-url-field" style="display: none;">
+                <label for="video_url">YouTube Video URL</label>
+                <input type="url" id="video_url" name="video_url">
+            </div>
+
+            <div id="file-field" style="display: none;">
+                <label for="file">PDF File</label>
+                <input type="file" id="file" name="file">
+            </div>
+
+            <button type="submit">Add Content</button>
+        </form>
+    </div>
+
+    <script src="{% static 'js/add-content.js' %}"></script>
+{% endblock %}

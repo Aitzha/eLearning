@@ -1,108 +1,45 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const token = localStorage.getItem('token');  // Get the token from localStorage
+    const token = localStorage.getItem('token');
+    const sectionId = window.location.pathname.split('/')[2];  // Assuming URL is /sections/<section_id>/content/
 
-    // If no token is found, redirect to the login page
-    if (!token) {
-        window.location.href = '/login';  // Redirect to login if the user is not authenticated
-    }
-
-    // Correctly extract the course ID from the URL (second-to-last part of the path)
-    const urlParts = window.location.pathname.split('/');
-    const courseId = urlParts[urlParts.length - 2];  // This grabs '1' from '/courses/1/edit/'
-
-    fetch(`/api/courses/${courseId}/`, {
+    fetch(`/api/sections/${sectionId}/content-items`, {
         headers: { 'Authorization': 'Token ' + token }
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to fetch course details');
-        }
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
-        document.getElementById('course-title').textContent = data.title;
+        const contentContainer = document.getElementById('content-items-container');
+        data.content_items.forEach(contentItem => {
+            const contentDiv = document.createElement('div');
+            contentDiv.classList.add('content-item');
+            contentDiv.innerHTML = `
+                <p>${contentItem.title}</p>
+                ${contentItem.content_type === 'video' ? `<iframe src="${contentItem.video_url}" frameborder="0" allowfullscreen></iframe>` : ''}
+                ${contentItem.content_type === 'pdf' ? `<a href="${contentItem.file}" target="_blank">Download PDF</a>` : ''}
+                <button class="modify-content-btn" data-content-id="${contentItem.id}">Modify</button>
+                <button class="delete-content-btn" data-content-id="${contentItem.id}">Delete</button>
+            `;
+            contentContainer.appendChild(contentDiv);
 
-        // Check if 'sections' exists before accessing it
-        if (data.sections && Array.isArray(data.sections)) {
-            const sectionsContainer = document.getElementById('sections-container');
-            data.sections.forEach(section => {
-                const sectionDiv = document.createElement('div');
-                sectionDiv.classList.add('section');
-                sectionDiv.setAttribute('data-section-id', section.id);  // Add section ID to the div
-
-                sectionDiv.innerHTML = `
-                    <h3 contenteditable="true">${section.title}</h3>
-                    <button class="delete-section-btn" data-section-id="${section.id}">Delete Section</button>
-                    <div class="materials-container" data-section-id="${section.id}">
-                        <!-- Content items will go here -->
-                    </div>
-                    <button class="add-content-btn" data-section-id="${section.id}">Add Content</button>
-                `;
-                sectionsContainer.appendChild(sectionDiv);
-
-                // Add delete section functionality
-                sectionDiv.querySelector('.delete-section-btn').addEventListener('click', function() {
-                    deleteSection(section.id, sectionDiv);
-                });
-
-                // Redirect to content management page on clicking "Add Content"
-                sectionDiv.querySelector('.add-content-btn').addEventListener('click', function() {
-                    window.location.href = `/sections/${section.id}/content/`;  // Redirect to content management page
-                });
+            // Modify content listener
+            contentDiv.querySelector('.modify-content-btn').addEventListener('click', function() {
+                window.location.href = `/content/${contentItem.id}/edit/`;  // Redirect to modify content page
             });
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching course details:', error);
+
+            // Delete content listener
+            contentDiv.querySelector('.delete-content-btn').addEventListener('click', function() {
+                if (confirm('Are you sure you want to delete this content?')) {
+                    fetch(`/api/content-items/${contentItem.id}/`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': 'Token ' + token }
+                    })
+                    .then(() => location.reload());  // Reload the page after deletion
+                }
+            });
+        });
     });
 
-    // Function to delete a section
-    function deleteSection(sectionId, sectionDiv) {
-        if (confirm('Are you sure you want to delete this section?')) {
-            fetch(`/api/sections/${sectionId}/`, {
-                method: 'DELETE',
-                headers: { 'Authorization': 'Token ' + token }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to delete section');
-                }
-                // Remove the section from the DOM
-                sectionDiv.remove();
-            })
-            .catch(error => {
-                console.error('Error deleting section:', error);
-            });
-        }
-    }
-
-    // Add new section event listener
-    const addSectionButton = document.getElementById('add-section-btn');
-    addSectionButton.addEventListener('click', function() {
-        const newSectionTitle = prompt('Enter the new section title:');  // Prompt the user for a section title
-        if (newSectionTitle) {
-            // Make a POST request to the API to add a new section
-            fetch(`/api/courses/${courseId}/sections/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Token ' + token
-                },
-                body: JSON.stringify({ title: newSectionTitle, order: 0 })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to add section');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Reload the page after successfully adding the section
-                location.reload();  // Refresh the page to show the new section
-            })
-            .catch(error => {
-                console.error('Error adding section:', error);
-            });
-        }
+    // Add new content event listener
+    document.getElementById('add-content-btn').addEventListener('click', function() {
+        window.location.href = `/sections/${sectionId}/content/new/`;  // Redirect to add new content page
     });
 });

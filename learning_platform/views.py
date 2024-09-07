@@ -45,3 +45,7 @@ def course_edit(request, course_id):
 
 def content_management(request, section_id):
     return render(request, 'content-manage.html', {'section_id': section_id})
+
+
+def add_content_view(request, section_id):
+    return render(request, 'add-content.html', {'section_id': section_id})

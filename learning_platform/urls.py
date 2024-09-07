@@ -37,4 +37,5 @@ urlpatterns = [
     path('courses/create', course_create, name='course-create'),
     path('courses/<int:course_id>', course_details, name='course-details'),
     path('sections/<int:section_id>/content', content_management, name='content-management'),
+    path('sections/<int:section_id>/content/new', add_content_view, name='add-content'),
 ]

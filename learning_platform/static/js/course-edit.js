@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="materials-container" data-section-id="${section.id}">
                         <!-- Content items will go here -->
                     </div>
-                    <button class="add-content-btn" data-section-id="${section.id}">Add Content</button>
+                    <button class="manage-content-btn" data-section-id="${section.id}">Manage Content</button>
                 `;
                 sectionsContainer.appendChild(sectionDiv);
 
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 // Redirect to content management page on clicking "Add Content"
-                sectionDiv.querySelector('.add-content-btn').addEventListener('click', function() {
+                sectionDiv.querySelector('.manage-content-btn').addEventListener('click', function() {
                     window.location.href = `/sections/${section.id}/content/`;  // Redirect to content management page
                 });
             });
