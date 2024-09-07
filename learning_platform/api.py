@@ -194,18 +194,20 @@ class CourseDetailAPIView(views.APIView):
 
             # Only include sections and materials if the user is enrolled or the creator
             if user_is_creator or user_is_enrolled:
-                sections = course.sections.all()  # Assuming course has related sections
-                course_data['sections'] = [
-                    {
-                        'id': section.id,
-                        'title': section.title,
-                        'materials': [
-                            {'type': material.content_type}
-                            for material in section.content_items.all()
-                        ]
-                    }
-                    for section in sections
-                ]
+                # Start from the first section (the one without a previous section)
+                first_section = Section.objects.filter(course=course, previous_section__isnull=True).first()
+
+                sections = []
+                current_section = first_section
+
+                while current_section:
+                    sections.append({
+                        'id': current_section.id,
+                        'title': current_section.title,
+                    })
+                    current_section = current_section.next_section
+
+                course_data['sections'] = sections
 
             return Response(course_data)
         except Course.DoesNotExist:
@@ -218,17 +220,21 @@ class SectionManagementAPIView(views.APIView):
     def post(self, request, course_id):
         try:
             course = Course.objects.get(id=course_id)
+            title = request.data.get('title')
 
-            # Get the highest order of the existing sections in this course
-            max_order = Section.objects.filter(course=course).aggregate(max_order=models.Max('order'))['max_order']
-            new_order = (max_order or 0) + 1
+            last_section = Section.objects.filter(course=course, next_section__isnull=True).first()
 
-            section = Section.objects.create(
-                title=request.data['title'],
+            new_section = Section.objects.create(
+                title=title,
                 course=course,
-                order=new_order
+                previous_section=last_section
             )
-            return Response({'success': True, 'section_id': section.id}, status=201)
+
+            if last_section:
+                last_section.next_section = new_section
+                last_section.save()
+
+            return Response({'success': True, 'section_id': new_section.id}, status=201)
         except Course.DoesNotExist:
             return Response({'error': 'You are not the course creator.'}, status=403)
 
@@ -236,7 +242,6 @@ class SectionManagementAPIView(views.APIView):
         try:
             section = Section.objects.get(id=section_id)
             section.title = request.data.get('title', section.title)
-            section.order = request.data.get('order', section.order)
             section.save()
             return Response({'success': True}, status=200)
         except Section.DoesNotExist:
@@ -244,8 +249,23 @@ class SectionManagementAPIView(views.APIView):
 
     def delete(self, request, section_id):
         try:
-            section = Section.objects.get(id=section_id)
+            section = Section.objects.get(id=section_id, course__teacher=request.user)
+
+            # Update the linked list pointers
+            previous_section = section.previous_section
+            next_section = section.next_section
+
+            if previous_section:
+                previous_section.next_section = next_section
+                previous_section.save()
+
+            if next_section:
+                next_section.previous_section = previous_section
+                next_section.save()
+
+            # Delete the section
             section.delete()
+
             return Response({'success': True}, status=200)
         except Section.DoesNotExist:
             return Response({'error': 'Section not found or you are not the course creator.'}, status=404)
@@ -327,17 +347,3 @@ class ContentItemManagementAPIView(views.APIView):
             return Response({'success': True}, status=200)
         except ContentItem.DoesNotExist:
             return Response({'error': 'Content item not found or you are not the course creator.'}, status=404)
-
-
-class MoveSectionAPIView(views.APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, section_id):
-        direction = request.data.get('direction')
-        section = Section.objects.get(id=section_id)
-        if direction == 'up':
-            section.order -= 1  # Move up in the order
-        elif direction == 'down':
-            section.order += 1  # Move down in the order
-        section.save()
-        return Response({'success': True})

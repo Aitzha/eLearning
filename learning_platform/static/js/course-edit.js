@@ -14,23 +14,11 @@ document.addEventListener('DOMContentLoaded', function() {
             sectionDiv.innerHTML = `
                 <p>${section.title}</p>
                 <div>
-                    <button class="move-up-btn" data-section-id="${section.id}">Up</button>
-                    <button class="move-down-btn" data-section-id="${section.id}">Down</button>
                     <button class="modify-section-btn" data-section-id="${section.id}">Modify</button>
                     <button class="delete-section-btn" data-section-id="${section.id}">Delete</button>
                 </div>
             `;
             sectionsContainer.appendChild(sectionDiv);
-
-            // Move section up
-            sectionDiv.querySelector('.move-up-btn').addEventListener('click', function() {
-                moveSection(section.id, 'up');
-            });
-
-            // Move section down
-            sectionDiv.querySelector('.move-down-btn').addEventListener('click', function() {
-                moveSection(section.id, 'down');
-            });
 
             // Modify section listener
             sectionDiv.querySelector('.modify-section-btn').addEventListener('click', function() {
@@ -48,19 +36,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
-
-    // Function to move a section
-    function moveSection(sectionId, direction) {
-        fetch(`/api/sections/${sectionId}/move`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Token ' + token
-            },
-            body: JSON.stringify({ direction })
-        })
-        .then(() => location.reload());  // Reload the page after moving section
-    }
 
     // Function to modify a section
     function modifySection(sectionId, newTitle) {

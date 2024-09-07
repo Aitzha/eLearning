@@ -41,7 +41,8 @@ class Course(models.Model):
 class Section(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='sections')
     title = models.CharField(max_length=255)
-    order = models.PositiveIntegerField(default=0)
+    previous_section = models.OneToOneField('self', null=True, blank=True, related_name='next_section_link', on_delete=models.SET_NULL)
+    next_section = models.OneToOneField('self', null=True, blank=True, related_name='previous_section_link', on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.title
