@@ -31,16 +31,24 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('file', document.getElementById('file').files[0]);
         }
 
-        fetch(`/api/sections/${sectionId}/content-items/`, {
+        fetch(`/api/sections/${sectionId}/content-items`, {
             method: 'POST',
             headers: {
                 'Authorization': 'Token ' + token
             },
             body: formData
         })
-        .then(response => response.json())
-        .then(() => {
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to add content');
+            }
+            return response.json();
+        })
+        .then(data => {
             window.location.href = `/sections/${sectionId}/content/`;  // Redirect back to content management page
+        })
+        .catch(error => {
+            console.error('Error adding content:', error);
         });
     });
 });

@@ -21,8 +21,7 @@ urlpatterns = [
     path('api/sections/<int:section_id>', SectionManagementAPIView.as_view(), name='section-manage'),
 
     # API endpoints to manage content items (create, update, delete)
-    path('api/sections/<int:section_id>/content-items', ContentItemManagementAPIView.as_view(),
-         name='content-item-create'),
+    path('api/sections/<int:section_id>/content-items', ContentItemManagementAPIView.as_view(), name='content-item-create'),
     path('api/content-items/<int:content_id>', ContentItemManagementAPIView.as_view(), name='content-item-manage'),
 
     # Frontend page for teachers to edit their course

@@ -270,21 +270,19 @@ class ContentItemManagementAPIView(views.APIView):
 
     def post(self, request, section_id):
         try:
-            section = Section.objects.get(id=section_id, course__teacher=request.user)
+            section = Section.objects.get(id=section_id)
 
-            # Determine whether it's a video or file
-            content_type = request.data.get('content_type')
             title = request.data.get('title')
-            order = request.data.get('order', 0)
+            content_type = request.data.get('content_type')
 
+            # Handling different content types
             if content_type == 'video':
                 video_url = request.data.get('video_url')
                 content_item = ContentItem.objects.create(
                     section=section,
                     title=title,
                     content_type='video',
-                    video_url=video_url,
-                    order=order
+                    video_url=video_url
                 )
             elif content_type == 'pdf':
                 file = request.FILES.get('file')
@@ -292,15 +290,14 @@ class ContentItemManagementAPIView(views.APIView):
                     section=section,
                     title=title,
                     content_type='pdf',
-                    file=file,
-                    order=order
+                    file=file
                 )
             else:
-                return Response({'error': 'Invalid content type'}, status=400)
+                return Response({'error': 'Invalid content type.'}, status=400)
 
             return Response({'success': True, 'content_id': content_item.id}, status=201)
         except Section.DoesNotExist:
-            return Response({'error': 'Section not found or you are not the course creator.'}, status=404)
+            return Response({'error': 'Section not found.'}, status=404)
 
     def put(self, request, content_id):
         try:
