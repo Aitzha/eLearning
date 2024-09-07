@@ -39,5 +39,9 @@ def course_details(request, course_id):
     return render(request, 'course-details.html', {'course_id': course_id})
 
 
-def course_edit_view(request, course_id):
+def course_edit(request, course_id):
     return render(request, 'course-edit.html', {'course_id': course_id})
+
+
+def content_management(request, section_id):
+    return render(request, 'content-manage.html', {'section_id': section_id})

@@ -26,7 +26,7 @@ urlpatterns = [
     path('api/content-items/<int:content_id>', ContentItemManagementAPIView.as_view(), name='content-item-manage'),
 
     # Frontend page for teachers to edit their course
-    path('courses/<int:course_id>/edit', course_edit_view, name='course-edit'),
+    path('courses/<int:course_id>/edit', course_edit, name='course-edit'),
 
     path('', index, name='index'),
     path('profile', profile, name='profile'),
@@ -36,4 +36,5 @@ urlpatterns = [
     path('teacher-manager', teacher_manager, name='teacher-manager'),
     path('courses/create', course_create, name='course-create'),
     path('courses/<int:course_id>', course_details, name='course-details'),
+    path('sections/<int:section_id>/content', content_management, name='content-management'),
 ]
