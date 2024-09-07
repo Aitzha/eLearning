@@ -151,3 +151,23 @@ class UserListView(generics.ListAPIView):
             queryset = queryset.filter(username__icontains=username)
 
         return queryset
+
+
+class UserCoursesAPIView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            # Get the user's profile
+            user_profile = request.user.profile
+            can_add_courses = user_profile.role.permissions.filter(codename='add_course').exists()
+
+            # Get courses created by the user (if they are allowed to add courses)
+            user_courses = Course.objects.filter(teacher=user_profile) if can_add_courses else []
+
+            return Response({
+                'can_add_courses': can_add_courses,
+                'user_courses': [{'title': course.title, 'description': course.description} for course in user_courses]
+            })
+        except UserProfile.DoesNotExist:
+            return Response({'error': 'User profile not found'}, status=404)
