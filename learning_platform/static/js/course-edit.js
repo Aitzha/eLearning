@@ -8,11 +8,13 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(response => response.json())
     .then(data => {
         const sectionsContainer = document.getElementById('sections-container');
-        data.sections.forEach((section, index) => {
+        data.sections.forEach((section) => {
             const sectionDiv = document.createElement('div');
             sectionDiv.classList.add('section-item');
+
+            // Create clickable section title
             sectionDiv.innerHTML = `
-                <p>${section.title}</p>
+                <a href="/sections/${section.id}/edit" class="section-link">${section.title}</a>
                 <div>
                     <button class="modify-section-btn" data-section-id="${section.id}">Modify</button>
                     <button class="delete-section-btn" data-section-id="${section.id}">Delete</button>
@@ -39,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to modify a section
     function modifySection(sectionId, newTitle) {
-        fetch(`/api/sections/${sectionId}`, {
+        fetch(`/api/sections/${sectionId}/`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -52,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to delete a section
     function deleteSection(sectionId) {
-        fetch(`/api/sections/${sectionId}`, {
+        fetch(`/api/sections/${sectionId}/`, {
             method: 'DELETE',
             headers: { 'Authorization': 'Token ' + token }
         })
@@ -69,9 +71,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Content-Type': 'application/json',
                     'Authorization': 'Token ' + token
                 },
-                body: JSON.stringify({ title: newSectionTitle, order: 0 })
+                body: JSON.stringify({ title: newSectionTitle })
             })
-            .then(() => location.reload());  // Reload the page after adding the section
+            .then(() => location.reload());  // Refresh the page to show the new section
         }
     });
 });

@@ -68,3 +68,20 @@
 #add-section-btn:hover {
     background-color: #0056b3;
 }
+
+.section-link {
+    text-decoration: none;  /* Remove underline */
+    color: #007bff;  /* Blue color */
+    font-weight: bold;
+    padding: 10px;
+    display: inline-block;
+    border-radius: 4px;
+    background-color: #f1f1f1;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-right: 10px;  /* Add space between link and buttons */
+}
+
+.section-link:hover {
+    background-color: #007bff;  /* Change background color on hover */
+    color: white;  /* Change text color on hover */
+}

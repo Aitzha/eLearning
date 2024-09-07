@@ -24,17 +24,15 @@ urlpatterns = [
     path('api/sections/<int:section_id>/content-items', ContentItemManagementAPIView.as_view(), name='content-item-create'),
     path('api/content-items/<int:content_id>', ContentItemManagementAPIView.as_view(), name='content-item-manage'),
 
-    # Frontend page for teachers to edit their course
-    path('courses/<int:course_id>/edit', course_edit, name='course-edit'),
-
     path('', index, name='index'),
     path('profile', profile, name='profile'),
     path('login', login, name='login'),
     path('register', register, name='register'),
     path('courses', course_list, name='courses'),
-    path('teacher-manager', teacher_manager, name='teacher-manager'),
-    path('courses/create', course_create, name='course-create'),
-    path('courses/<int:course_id>', course_details, name='course-details'),
-    path('sections/<int:section_id>/content', content_management, name='content-management'),
-    path('sections/<int:section_id>/content/new', add_content_view, name='add-content'),
+    path('teacher-manager', teacher_manager, name='teacher_manager'),
+    path('courses/create', course_create, name='add_course'),
+    path('courses/<int:course_id>', course_details, name='course_details'),
+    path('courses/<int:course_id>/edit', course_edit, name='course_edit'),
+    path('sections/<int:section_id>/edit', section_edit, name='section_edit'),
+    path('content/<int:section_id>/create', add_content, name='add_content'),
 ]
