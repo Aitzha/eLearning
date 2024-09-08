@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const description = document.getElementById('description').value;
 
         // Send the data to the API using a POST request
-        fetch('/api/course-create', {
+        fetch('/api/courses/create', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

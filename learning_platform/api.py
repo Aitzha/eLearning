@@ -214,13 +214,13 @@ class CourseManageAPIView(views.APIView):
         return Response({'error': 'Course ID is required for GET'}, status=400)
 
     def post(self, request):
-        # Handle course creation
         data = request.data.copy()
 
         if not user_has_permission(request.user, 'add_course'):
             return Response({'error': 'You do not have permission to add courses.'}, status=status.HTTP_403_FORBIDDEN)
 
-        data['teacher'] = request.user.profile.id
+        data['teacher_id'] = request.user.profile.id
+
         serializer = CourseSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
@@ -229,7 +229,6 @@ class CourseManageAPIView(views.APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, course_id):
-        # Handle course deletion
         try:
             course = Course.objects.get(id=course_id)
             if course.teacher != request.user.profile:

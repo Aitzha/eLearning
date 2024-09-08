@@ -57,8 +57,15 @@ class SectionSerializer(serializers.ModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    teacher = UserProfilePrivateSerializer()
+    teacher = UserProfilePrivateSerializer(read_only=True)
+    teacher_id = serializers.PrimaryKeyRelatedField(queryset=UserProfile.objects.all(), write_only=True)
 
     class Meta:
         model = Course
-        fields = ['id', 'title', 'description', 'teacher']
+        fields = ['id', 'title', 'description', 'teacher', 'teacher_id']
+
+    def create(self, validated_data):
+        # Pop teacher_id from validated_data and use it to set the teacher
+        teacher_id = validated_data.pop('teacher_id')
+        validated_data['teacher'] = teacher_id
+        return super().create(validated_data)
