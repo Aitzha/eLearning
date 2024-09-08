@@ -1,12 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
     const token = localStorage.getItem('token');
-    const sectionId = window.location.pathname.split('/')[2];  // Assuming URL is /sections/<section_id>/content/
+    const sectionId = window.location.pathname.split('/')[2];
+    const backButton = document.getElementById('back-button');
+    let courseId = null;
 
     fetch(`/api/sections/${sectionId}`, {
         headers: { 'Authorization': 'Token ' + token }
     })
     .then(response => response.json())
     .then(data => {
+        courseId = data.course_id;
+        backButton.href = `/courses/${courseId}/edit/`;
+
         const contentContainer = document.getElementById('content-items-container');
         data.content_items.forEach(contentItem => {
             const contentDiv = document.createElement('div');

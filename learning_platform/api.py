@@ -231,7 +231,8 @@ class SectionManageAPIView(views.APIView):
                 }
                 for content_item in content_items
             ]
-            return Response({'content_items': content_items_data}, status=200)
+
+            return Response({'course_id': section.course_id, 'content_items': content_items_data}, status=200)
         except Section.DoesNotExist:
             return Response({'error': 'Section not found.'}, status=404)
 
