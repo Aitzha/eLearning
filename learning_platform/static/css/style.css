@@ -83,3 +83,43 @@ footer {
     cursor: pointer;
     font-size: 16px;
 }
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: white;  /* Header background is white */
+    color: #333;
+    border-bottom: 1px solid #ddd;  /* Optional: Adds a subtle border to separate the header */
+}
+
+.navbar-left .logo {
+    color: #333;
+    text-decoration: none;
+    font-size: 24px;
+}
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-link {
+    color: #007bff;
+    text-decoration: none;
+    margin-left: 30px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.navbar-link:hover {
+    background-color: #e0e0e0;  /* Subtle hover effect */
+    color: #007bff;
+}
+
+#user-menu {
+    margin-left: 20px; /* Keep space between user menu and other items */
+}
+
