@@ -156,17 +156,33 @@ class CourseEnrollmentAPIView(views.APIView):
     def post(self, request, course_id, action):
         try:
             course = Course.objects.get(id=course_id)
+
+            # Check if the user is the course creator
             if course.teacher == request.user.profile:
                 return Response({'error': 'You cannot enroll/withdraw from your own course'}, status=400)
 
+            # Handle the enrollment action
             if action == 'enroll':
-                course.students.add(request.user.profile)
+                # Check if the user is already enrolled
+                if Enrollment.objects.filter(course=course, student=request.user.profile).exists():
+                    return Response({'error': 'You are already enrolled in this course'}, status=400)
+
+                # Create a new enrollment
+                Enrollment.objects.create(course=course, student=request.user.profile)
                 return Response({'success': 'Enrolled successfully'}, status=200)
+
             elif action == 'withdraw':
-                course.students.remove(request.user.profile)
+                # Check if the user is enrolled in the course
+                enrollment = Enrollment.objects.filter(course=course, student=request.user.profile).first()
+                if not enrollment:
+                    return Response({'error': 'You are not enrolled in this course'}, status=400)
+
+                # Delete the enrollment
+                enrollment.delete()
                 return Response({'success': 'Withdrawn successfully'}, status=200)
-            else:
-                return Response({'error': 'Invalid action'}, status=400)
+
+            return Response({'error': 'Invalid action'}, status=400)
+
         except Course.DoesNotExist:
             return Response({'error': 'Course not found'}, status=404)
 

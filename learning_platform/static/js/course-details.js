@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-        // Function to display sections and content
+    // Function to display sections and content
     function displaySections(data) {
             const sectionsContainer = document.getElementById('sections-container');
             if (data.sections.length > 0) {
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle enrollment/withdrawal
     enrollBtn?.addEventListener('click', function() {
         const action = enrollBtn.textContent.trim() === 'Enroll' ? 'enroll' : 'withdraw';
-        fetch(`/api/courses/${courseId}/${action}/`, {
+        fetch(`/api/courses/${courseId}/${action}`, {
             method: 'POST',
             headers: {
                 'Authorization': 'Token ' + token,
@@ -114,6 +114,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                window.location.reload();
                 enrollBtn.textContent = action === 'enroll' ? 'Withdraw' : 'Enroll';
             } else {
                 alert('Action failed: ' + (data.error || 'Unknown error'));
