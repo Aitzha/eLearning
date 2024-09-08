@@ -58,7 +58,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'eLearning.middleware.RemoveSlashMiddleware'
+    'eLearning.middleware.RemoveSlashMiddleware',
+    'eLearning.middleware.XFrameOptionsMiddleware'
 ]
 
 ROOT_URLCONF = 'eLearning.urls'
@@ -141,3 +142,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 APPEND_SLASH = True
 
+MEDIA_URL = '/'
+MEDIA_ROOT = BASE_DIR / ""
+
+X_FRAME_OPTIONS = 'ALLOWALL'

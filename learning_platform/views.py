@@ -53,3 +53,6 @@ def add_content(request, section_id):
 
 def content_edit(request, content_id):
     return render(request, 'content-form.html', {'content_id': content_id})
+
+def content_view(request, content_id):
+    return render(request, 'content-view.html', {'content_id': content_id})

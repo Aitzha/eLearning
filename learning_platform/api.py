@@ -317,22 +317,15 @@ class SectionManageAPIView(views.APIView):
 
 class ContentItemManageAPIView(views.APIView):
     permission_classes = [IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser]  # Allows handling file uploads
+    parser_classes = [MultiPartParser, FormParser]
 
     def get(self, request, content_id):
         try:
             content_item = ContentItem.objects.get(id=content_id)
-            data = {
-                'id': content_item.id,
-                'title': content_item.title,
-                'content_type': content_item.content_type,
-                'video_url': content_item.video_url,
-                'file': content_item.file.url if content_item.file else None,
-                'section_id': content_item.section.id
-            }
-            return Response(data, status=200)
+            serializer = ContentItemSerializer(content_item)
+            return Response(serializer.data, status=200)
         except ContentItem.DoesNotExist:
-            return Response({'error': 'Content not found'}, status=404)
+            return Response({'error': 'Content item not found'}, status=404)
 
     def post(self, request, section_id):
         try:

@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.http import HttpResponsePermanentRedirect
+from django.utils.deprecation import MiddlewareMixin
 
 
 class RemoveSlashMiddleware:
@@ -20,3 +22,14 @@ class RemoveSlashMiddleware:
             return HttpResponsePermanentRedirect(request.path_info[:-1])
 
         return self.get_response(request)
+
+
+class XFrameOptionsMiddleware(MiddlewareMixin):
+    def process_response(self, request, response):
+        # Check if the request is for the media files (e.g., PDFs)
+        if request.path.startswith('/media/'):
+            response['X-Frame-Options'] = 'ALLOWALL'
+        else:
+            # Keep default behavior for other pages
+            response['X-Frame-Options'] = getattr(settings, 'X_FRAME_OPTIONS', 'DENY')
+        return response

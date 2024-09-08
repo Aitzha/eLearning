@@ -1,3 +1,4 @@
+from django.conf.urls.static import static
 from django.urls import path
 from .api import *
 from .views import *
@@ -37,4 +38,9 @@ urlpatterns = [
     path('sections/<int:section_id>/edit', section_edit, name='section_edit'),
     path('content/<int:section_id>/create', add_content, name='add_content'),
     path('content/<int:content_id>/edit', content_edit, name='content-edit'),
+    path('content/<int:content_id>/view', content_view, name='content-view'),
 ]
+
+# This serves media files during development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -45,7 +45,19 @@ class UserProfilePrivateSerializer(serializers.ModelSerializer):
 class ContentItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContentItem
-        fields = ['id', 'title', 'content_type']
+        fields = ['id', 'section', 'title', 'content_type', 'file', 'video_url', 'order']
+
+    def to_representation(self, instance):
+        # Custom representation for the content type
+        representation = super().to_representation(instance)
+
+        # Only include the relevant field based on content_type
+        if instance.content_type == 'pdf':
+            representation.pop('video_url', None)
+        elif instance.content_type == 'video':
+            representation.pop('file', None)
+
+        return representation
 
 
 class SectionSerializer(serializers.ModelSerializer):

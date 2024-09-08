@@ -1,0 +1,21 @@
+.content-view-page {
+    margin: 0 auto;
+    width: 80%;
+    padding: 20px;
+}
+
+.content-title {
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+#content-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+iframe {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}

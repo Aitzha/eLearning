@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}View Content{% endblock %}
+
+{% block content %}
+<div class="content-view-page">
+    <h1 class="content-title"></h1>
+    <div id="content-container">
+        <!-- Content will be dynamically populated here -->
+    </div>
+</div>
+
+<script src="{% static 'js/content-view.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/content-view.css' %}">
+{% endblock %}
