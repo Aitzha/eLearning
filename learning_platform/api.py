@@ -187,15 +187,26 @@ class CourseManageAPIView(views.APIView):
                 course_data = CourseSerializer(course).data
                 sections_data = SectionSerializer(sections, many=True).data
 
-                # Check if the user is enrolled in the course via the Enrollment model
-                is_enrolled = Enrollment.objects.filter(course=course, student=request.user).exists()
+                # Initialize values for unauthenticated users
+                is_enrolled = False
+                can_view_profile = False
+                is_creator = False
+
+                # Check if the user is authenticated
+                if request.user.is_authenticated:
+                    # Check if the user is the course creator
+                    is_creator = course.teacher == request.user.profile
+                    # Check if the user is enrolled in the course via the Enrollment model
+                    is_enrolled = Enrollment.objects.filter(course=course, student=request.user.profile).exists()
+                    # Check if the user has the 'can view profile' permission
+                    can_view_profile = request.user.profile.role.permissions.filter(codename='view_profile').exists()
 
                 return Response({
                     'course': course_data,
                     'sections': sections_data,
-                    'is_creator': course.teacher == request.user.profile,
+                    'is_creator': is_creator,
                     'is_enrolled': is_enrolled,
-                    'can_view_profile': request.user.profile.role.permissions.filter(codename='view_profile').exists()
+                    'can_view_profile': can_view_profile
                 })
             except Course.DoesNotExist:
                 return Response({'error': 'Course not found'}, status=404)

@@ -62,13 +62,10 @@ document.addEventListener('DOMContentLoaded', function() {
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data)
-        console.log(data.course)
-        console.log(data.course.title)
         if (data.course) {
             document.querySelector('.course-title').textContent = data.course.title;
             document.querySelector('.course-description').textContent = data.course.description;
-            document.querySelector('.course-teacher').textContent = data.course.teacher.name;
+            document.querySelector('.course-teacher').textContent = data.course.teacher.username;
 
             // Handle section dropdown
             if (data.sections.length > 0) {
