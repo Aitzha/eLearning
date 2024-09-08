@@ -4,10 +4,15 @@ from .models import *
 
 
 class UserSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ('username', 'password', 'email')
+        fields = ('username', 'password', 'email', 'full_name')
         extra_kwargs = {'password': {'write_only': True}}
+
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}".strip()
 
     def create(self, validated_data):
         # ensures that password is hashed before being saved
@@ -23,17 +28,18 @@ class UserProfilePublicSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ['username', 'role']
+        fields = ['id', 'username', 'role']
 
 
 class UserProfilePrivateSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
     username = serializers.CharField(source='user.username')
     email = serializers.EmailField(source='user.email')
     role = serializers.CharField(source='role.name')
 
     class Meta:
         model = UserProfile
-        fields = ['username', 'email', 'role']
+        fields = ['id', 'user', 'username', 'email', 'role']
 
 
 class ContentItemSerializer(serializers.ModelSerializer):
@@ -51,7 +57,7 @@ class SectionSerializer(serializers.ModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    teacher = serializers.StringRelatedField()
+    teacher = UserProfilePrivateSerializer()
 
     class Meta:
         model = Course
