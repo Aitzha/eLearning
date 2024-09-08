@@ -41,30 +41,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 enrollBtn.disabled = true;  // Disable the enroll button for unauthenticated users
             }
 
-            // Handle section dropdown logic (already implemented)
-            if (data.is_creator || data.is_enrolled) {
-                const sectionsList = document.querySelector('.sections-list');
-                sectionsList.style.display = 'block';
+            // Handle section and content list (now displayed as a simple list)
+            const sectionsContainer = document.getElementById('sections-container');
+            if (data.sections.length > 0) {
                 data.sections.forEach(section => {
                     const sectionDiv = document.createElement('div');
                     sectionDiv.classList.add('section');
-                    const sectionTitle = document.createElement('button');
-                    sectionTitle.classList.add('dropdown-btn');
-                    sectionTitle.textContent = section.title;
 
-                    const contentList = document.createElement('div');
-                    contentList.classList.add('dropdown-content');
+                    const sectionTitle = document.createElement('h4');
+                    sectionTitle.textContent = section.title;
+                    sectionDiv.appendChild(sectionTitle);
+
+                    const contentList = document.createElement('ul');
                     section.content_items.forEach(content => {
+                        const contentItem = document.createElement('li');
                         const contentLink = document.createElement('a');
                         contentLink.href = `/content/${content.id}/view`;
                         contentLink.textContent = content.title;
-                        contentList.appendChild(contentLink);
+                        contentItem.appendChild(contentLink);
+                        contentList.appendChild(contentItem);
                     });
 
-                    sectionDiv.appendChild(sectionTitle);
                     sectionDiv.appendChild(contentList);
-                    sectionsList.appendChild(sectionDiv);
+                    sectionsContainer.appendChild(sectionDiv);
                 });
+            } else {
+                sectionsContainer.innerHTML = "<p>No sections available.</p>";
             }
         }
     });
@@ -89,6 +91,17 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => {
             alert('Network error: ' + error);
+        });
+    });
+
+    const dropdownButtons = document.querySelectorAll('.dropdown-btn');
+
+    dropdownButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const section = button.parentElement;
+
+            // Toggle the "open" class to show/hide the content
+            section.classList.toggle('open');
         });
     });
 

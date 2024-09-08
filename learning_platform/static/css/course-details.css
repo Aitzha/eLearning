@@ -1,47 +1,31 @@
+/* General styling for course details page */
 .course-details-page {
     margin: 0 auto;
-    width: 60%;
+    width: 70%;
     padding: 20px;
 }
 
+.course-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.course-description {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.course-teacher {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 30px;
+}
+
 .course-buttons {
-    margin-top: 20px;
+    margin-bottom: 30px;
     display: flex;
     gap: 10px;
-}
-
-.btn-danger {
-    background-color: #dc3545;
-}
-
-.btn-danger:hover {
-    background-color: #c82333;
-}
-
-/* Dropdown styles for sections */
-.section-dropdown {
-    margin-top: 20px;
-}
-
-.dropdown-btn {
-    background-color: #f9f9f9;
-    color: #333;
-    padding: 10px;
-    width: 100%;
-    border: 1px solid #ccc;
-    cursor: pointer;
-}
-
-.dropdown-content {
-    display: none;
-    background-color: #f1f1f1;
-    padding: 10px;
-    border: 1px solid #ccc;
-}
-
-.dropdown-btn:focus + .dropdown-content,
-.dropdown-btn:hover + .dropdown-content {
-    display: block;
 }
 
 .btn {
@@ -54,17 +38,75 @@
     transition: background-color 0.3s ease;
 }
 
+.btn-danger {
+    background-color: #dc3545;
+}
+
 .btn:hover {
     background-color: #0056b3;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
 }
 
 .btn:disabled {
     background-color: #cccccc;
     color: #666666;
     cursor: not-allowed;
-    border: 1px solid #aaaaaa;
 }
 
-.btn:disabled:hover {
-    background-color: #cccccc;
+/* Section and content list styling */
+.sections-list {
+    margin-top: 40px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.section {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.section h4 {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+/* Improved content items styling */
+.section ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.section ul li {
+    margin-bottom: 10px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.section ul li:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.section ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    display: block;
+    transition: color 0.3s ease;
+}
+
+.section ul li a:hover {
+    color: #007bff;
 }
