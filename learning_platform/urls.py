@@ -17,6 +17,7 @@ urlpatterns = [
     path('api/users', UserListView.as_view(), name='api_users_list'),
 
     path('api/sections/<int:section_id>', SectionManageAPIView.as_view(), name='section-manage'),
+    path('api/sections/<int:course_id>/add', SectionManageAPIView.as_view(), name='section-manage'),
 
     path('api/content-items/<int:content_id>', ContentItemManageAPIView.as_view(), name='content-item-manage'),
     path('api/content-items/<int:section_id>/add', ContentItemManageAPIView.as_view(), name='content-item-add'),

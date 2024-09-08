@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('add-section-btn').addEventListener('click', function() {
         const newSectionTitle = prompt('Enter the new section title:');
         if (newSectionTitle) {
-            fetch(`/api/courses/${courseId}/sections`, {
+            fetch(`/api/sections/${courseId}/add`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
