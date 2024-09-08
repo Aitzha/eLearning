@@ -69,33 +69,6 @@ class LogoutView(views.APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-class CourseCreateView(views.APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        # Create a mutable copy of request.data (to be able to modify it)
-        data = request.data.copy()
-
-        # Use the custom utility function to check permissions
-        if not user_has_permission(request.user, 'add_course'):
-            return Response({'error': 'You do not have permission to add courses.'}, status=status.HTTP_403_FORBIDDEN)
-
-        # Set the teacher to the current user
-        data['teacher'] = request.user.profile.id
-
-        serializer = CourseSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class CourseListView(generics.ListAPIView):
-    queryset = Course.objects.all()
-    serializer_class = CourseSerializer
-
-
 class AddTeacherView(views.APIView):
     permission_classes = [IsAuthenticated]
 
@@ -177,42 +150,81 @@ class UserCoursesAPIView(views.APIView):
             return Response({'error': 'User profile not found'}, status=404)
 
 
-class CourseDetailAPIView(views.APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
+class CourseEnrollmentAPIView(views.APIView):
+    permission_classes = [IsAuthenticated]
 
-    def get(self, request, course_id):
+    def post(self, request, course_id, action):
         try:
             course = Course.objects.get(id=course_id)
-            user_is_creator = course.teacher == request.user.profile if request.user.is_authenticated else False
-            user_is_enrolled = Enrollment.objects.filter(course=course, student=request.user).exists() if request.user.is_authenticated else False
+            if course.teacher == request.user.profile:
+                return Response({'error': 'You cannot enroll/withdraw from your own course'}, status=400)
 
-            # Prepare the basic course details (available to everyone)
-            course_data = {
-                'title': course.title,
-                'description': course.description,
-                'teacher': course.teacher.user.username,
-                'user_is_creator': user_is_creator,
-                'user_is_enrolled': user_is_enrolled
-            }
+            if action == 'enroll':
+                course.students.add(request.user.profile)
+                return Response({'success': 'Enrolled successfully'}, status=200)
+            elif action == 'withdraw':
+                course.students.remove(request.user.profile)
+                return Response({'success': 'Withdrawn successfully'}, status=200)
+            else:
+                return Response({'error': 'Invalid action'}, status=400)
+        except Course.DoesNotExist:
+            return Response({'error': 'Course not found'}, status=404)
 
-            # Only include sections and materials if the user is enrolled or the creator
-            if user_is_creator or user_is_enrolled:
-                # Start from the first section (the one without a previous section)
-                first_section = Section.objects.filter(course=course, previous_section__isnull=True).first()
 
-                sections = []
-                current_section = first_section
+class CourseListView(generics.ListAPIView):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
 
-                while current_section:
-                    sections.append({
-                        'id': current_section.id,
-                        'title': current_section.title,
-                    })
-                    current_section = current_section.next_section
 
-                course_data['sections'] = sections
+class CourseManageAPIView(views.APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
-            return Response(course_data)
+    def get(self, request, course_id=None):
+        if course_id:
+            try:
+                course = Course.objects.get(id=course_id)
+                sections = course.sections.all()  # Assuming related name "sections"
+                course_data = CourseSerializer(course).data
+                sections_data = SectionSerializer(sections, many=True).data
+
+                # Check if the user is enrolled in the course via the Enrollment model
+                is_enrolled = Enrollment.objects.filter(course=course, student=request.user).exists()
+
+                return Response({
+                    'course': course_data,
+                    'sections': sections_data,
+                    'is_creator': course.teacher == request.user.profile,
+                    'is_enrolled': is_enrolled,
+                    'can_view_profile': request.user.profile.role.permissions.filter(codename='view_profile').exists()
+                })
+            except Course.DoesNotExist:
+                return Response({'error': 'Course not found'}, status=404)
+
+        return Response({'error': 'Course ID is required for GET'}, status=400)
+
+    def post(self, request):
+        # Handle course creation
+        data = request.data.copy()
+
+        if not user_has_permission(request.user, 'add_course'):
+            return Response({'error': 'You do not have permission to add courses.'}, status=status.HTTP_403_FORBIDDEN)
+
+        data['teacher'] = request.user.profile.id
+        serializer = CourseSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, course_id):
+        # Handle course deletion
+        try:
+            course = Course.objects.get(id=course_id)
+            if course.teacher != request.user.profile:
+                return Response({'error': 'Permission denied'}, status=403)
+            course.delete()
+            return Response({'success': True}, status=200)
         except Course.DoesNotExist:
             return Response({'error': 'Course not found'}, status=404)
 

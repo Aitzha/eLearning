@@ -1,37 +1,58 @@
-.course-detail-page {
-    width: 80%;
-    margin: 20px auto;
+.course-details-page {
+    margin: 0 auto;
+    width: 60%;
+    padding: 20px;
 }
 
-.section {
-    margin-bottom: 15px;
+.course-buttons {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
 }
 
-.collapsible {
+.btn {
+    padding: 10px 20px;
     background-color: #007bff;
     color: white;
+    border: none;
+    border-radius: 4px;
     cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+/* Dropdown styles for sections */
+.section-dropdown {
+    margin-top: 20px;
+}
+
+.dropdown-btn {
+    background-color: #f9f9f9;
+    color: #333;
     padding: 10px;
     width: 100%;
-    border: none;
-    text-align: left;
-    outline: none;
-    font-size: 16px;
+    border: 1px solid #ccc;
+    cursor: pointer;
 }
 
-.collapsible:after {
-    content: '\002B';  /* Plus symbol */
-    color: white;
-    float: right;
-}
-
-.active:after {
-    content: '\2212';  /* Minus symbol */
-}
-
-.content {
-    padding: 0 18px;
+.dropdown-content {
     display: none;
-    overflow: hidden;
     background-color: #f1f1f1;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.dropdown-btn:focus + .dropdown-content,
+.dropdown-btn:hover + .dropdown-content {
+    display: block;
 }

@@ -67,6 +67,9 @@ class Enrollment(models.Model):
     def __str__(self):
         return f"{self.student.username} enrolled in {self.course.title}"
 
+    class Meta:
+        unique_together = ('course', 'student')
+
 
 class Feedback(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='feedbacks')

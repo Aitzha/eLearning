@@ -1,20 +1,32 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Course Details{% endblock %}
+{% block title %}{{ course.title }} Details{% endblock %}
 
 {% block content %}
-    <div class="course-detail-page">
-        <h1 id="course-title"></h1>
-        <p id="course-description"></p>
-        <p><strong>Teacher:</strong> <span id="teacher-name"></span></p>
+    <div class="course-details-page">
+        <!-- Course Title and Description -->
+        <h1 class="course-title"></h1>
+        <p class="course-description"></p>
+        <p><strong>Teacher:</strong> <span class="course-teacher"></span></p>
 
-        <!-- Button to enroll/withdraw -->
-        <div id="enroll-withdraw-button"></div>
+        <!-- Course Buttons -->
+        <div class="course-buttons">
+            <!-- Enroll/Withdraw Button (Disabled for Course Creator) -->
+            <button id="enroll-btn" class="btn" disabled>Loading...</button>
 
-        <h2>Course Sections</h2>
-        <div id="sections-container">
-            <!-- Sections will be dynamically added here -->
+            <!-- Modify and Delete Buttons (Only visible for Course Creator) -->
+            <button id="modify-btn" class="btn" style="display: none;">Modify Course</button>
+            <button id="delete-btn" class="btn btn-danger" style="display: none;">Delete Course</button>
+
+            <!-- View Enrolled Students Button (Visible for users with 'can view profile' permission) -->
+            <a href="/courses/{{ course.id }}/students" id="view-students-btn" class="btn" style="display: none;">View Enrolled Students</a>
+        </div>
+
+        <!-- Section and Content List (Dropdowns, visible for enrolled users and creator) -->
+        <div class="sections-list" style="display: none;">
+            <h3>Sections</h3>
+            <!-- Sections will be dynamically populated here -->
         </div>
     </div>
 

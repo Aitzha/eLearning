@@ -8,13 +8,14 @@ urlpatterns = [
     path('api/register', RegisterView.as_view(), name='api_register'),
     path('api/login', LoginView.as_view(), name='api_login'),
     path('api/logout', LogoutView.as_view(), name='api_logout'),
-    path('api/course-create', CourseCreateView.as_view(), name='api_course_create'),
     path('api/courses', CourseListView.as_view(), name='api_course_list'),
     path('api/user-courses', UserCoursesAPIView.as_view(), name='api_user-courses'),
-    path('api/courses/<int:course_id>', CourseDetailAPIView.as_view(), name='api_course_detail'),
 
     path('api/add-teacher', AddTeacherView.as_view(), name='api_add_teacher'),
     path('api/users', UserListView.as_view(), name='api_users_list'),
+
+    path('api/courses/<int:course_id>', CourseManageAPIView.as_view(), name='api_course_detail'),
+    path('api/courses/create', CourseManageAPIView.as_view(), name='api_course_create'),
 
     path('api/sections/<int:section_id>', SectionManageAPIView.as_view(), name='section-manage'),
     path('api/sections/<int:course_id>/add', SectionManageAPIView.as_view(), name='section-manage'),
@@ -22,6 +23,7 @@ urlpatterns = [
     path('api/content-items/<int:content_id>', ContentItemManageAPIView.as_view(), name='content-item-manage'),
     path('api/content-items/<int:section_id>/add', ContentItemManageAPIView.as_view(), name='content-item-add'),
 
+    path('api/courses/<int:course_id>/<str:action>', CourseEnrollmentAPIView.as_view(), name='course-enroll-withdraw'),
 
     path('', index, name='index'),
     path('profile', profile, name='profile'),

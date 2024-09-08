@@ -36,7 +36,23 @@ class UserProfilePrivateSerializer(serializers.ModelSerializer):
         fields = ['username', 'email', 'role']
 
 
+class ContentItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContentItem
+        fields = ['id', 'title', 'content_type']
+
+
+class SectionSerializer(serializers.ModelSerializer):
+    content_items = ContentItemSerializer(many=True)
+
+    class Meta:
+        model = Section
+        fields = ['id', 'title', 'content_items']
+
+
 class CourseSerializer(serializers.ModelSerializer):
+    teacher = serializers.StringRelatedField()
+
     class Meta:
         model = Course
         fields = ['id', 'title', 'description', 'teacher']
