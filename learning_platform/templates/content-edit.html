@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Modify Content{% endblock %}
+
+{% block content %}
+    <div class="modify-content-page">
+        <h1>Modify Content</h1>
+        <form id="modify-content-form">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+
+            <div class="form-group">
+                <label for="content_type">Content Type</label>
+                <select id="content_type" name="content_type">
+                    <option value="video">Video</option>
+                    <option value="pdf">PDF</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="video-url-field">
+                <label for="video_url">YouTube Video URL</label>
+                <input type="url" id="video_url" name="video_url">
+            </div>
+
+            <div class="form-group" id="file-field">
+                <label for="file">PDF File</label>
+                <input type="file" id="file" name="file">
+            </div>
+
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+
+    <script src="{% static 'js/content-edit.js' %}"></script>
+{% endblock %}

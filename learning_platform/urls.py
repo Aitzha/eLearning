@@ -35,4 +35,5 @@ urlpatterns = [
     path('courses/<int:course_id>/edit', course_edit, name='course_edit'),
     path('sections/<int:section_id>/edit', section_edit, name='section_edit'),
     path('content/<int:section_id>/create', add_content, name='add_content'),
+    path('content/<int:content_id>/edit', content_edit, name='content-edit'),
 ]
