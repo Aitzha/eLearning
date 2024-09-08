@@ -41,7 +41,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 enrollBtn.disabled = true;  // Disable the enroll button for unauthenticated users
             }
 
-            // Handle section and content list (now displayed as a simple list)
+            // Handle button state based on user authentication and roles
+            if (token) {
+                if (data.is_creator) {
+                    enrollBtn.textContent = "You are the creator";
+                    enrollBtn.disabled = true;
+                    modifyBtn.style.display = "inline-block";
+                    deleteBtn.style.display = "inline-block";
+                } else {
+                    enrollBtn.textContent = data.is_enrolled ? "Withdraw" : "Enroll";
+                    enrollBtn.disabled = false;
+                }
+
+                if (data.can_view_profile) {
+                    document.getElementById('view-students-btn').style.display = "inline-block";
+                }
+
+                // Show sections only if the user is enrolled or is the creator
+                if (data.is_creator || data.is_enrolled) {
+                    displaySections(data);
+                } else {
+                    document.querySelector('.sections-list').style.display = "none";
+                }
+            } else {
+                enrollBtn.textContent = "Login to Enroll";
+                enrollBtn.disabled = true;
+                document.querySelector('.sections-list').style.display = "none";
+            }
+        }
+    });
+
+        // Function to display sections and content
+    function displaySections(data) {
             const sectionsContainer = document.getElementById('sections-container');
             if (data.sections.length > 0) {
                 data.sections.forEach(section => {
@@ -68,8 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 sectionsContainer.innerHTML = "<p>No sections available.</p>";
             }
-        }
-    });
+    }
 
     // Handle enrollment/withdrawal
     enrollBtn?.addEventListener('click', function() {
