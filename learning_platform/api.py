@@ -343,17 +343,22 @@ class ContentItemManageAPIView(views.APIView):
         try:
             content_item = ContentItem.objects.get(id=content_id)
             content_item.title = request.data.get('title', content_item.title)
-            content_item.order = request.data.get('order', content_item.order)
+            content_item.content_type = request.data.get('content_type', content_item.content_type)
 
             if content_item.content_type == 'video':
+                # If it's video, update the video URL and clear the file
                 content_item.video_url = request.data.get('video_url', content_item.video_url)
+                content_item.file = None  # Clear file if switching to video
             elif content_item.content_type == 'pdf':
-                content_item.file = request.FILES.get('file', content_item.file)
+                # If it's a PDF, clear the video URL and upload the file
+                content_item.video_url = None  # Clear video URL if switching to PDF
+                if 'file' in request.FILES:
+                    content_item.file = request.FILES['file']
 
             content_item.save()
-            return Response({'success': True}, status=200)
+            return Response({'success': True, 'section_id': content_item.section.id}, status=200)
         except ContentItem.DoesNotExist:
-            return Response({'error': 'Content item not found or you are not the course creator.'}, status=404)
+            return Response({'error': 'Content not found'}, status=404)
 
     def delete(self, request, content_id):
         try:

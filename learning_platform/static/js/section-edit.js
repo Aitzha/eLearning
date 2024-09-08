@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const token = localStorage.getItem('token');
     const sectionId = window.location.pathname.split('/')[2];  // Assuming URL is /sections/<section_id>/content/
 
-    fetch(`/api/sections/${sectionId}/content-items`, {
+    fetch(`/api/sections/${sectionId}`, {
         headers: { 'Authorization': 'Token ' + token }
     })
     .then(response => response.json())

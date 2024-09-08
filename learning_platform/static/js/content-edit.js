@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => {
             if (response.ok) {
                 // Use the stored sectionId for redirect
-                window.location.href = `/sections/${sectionId}/edit/`;  // Redirect back to section edit page
+                window.location.href = `/sections/${sectionId}/edit`;  // Redirect back to section edit page
             } else {
                 alert('Failed to update content.');
             }

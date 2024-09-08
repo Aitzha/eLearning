@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('file', document.getElementById('file').files[0]);
         }
 
-        fetch(`/api/sections/${sectionId}/content-items`, {
+        fetch(`/api/content-items/${sectionId}/add`, {
             method: 'POST',
             headers: {
                 'Authorization': 'Token ' + token
