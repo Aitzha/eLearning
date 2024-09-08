@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const token = localStorage.getItem('token');
-    const courseId = window.location.pathname.split('/')[2];  // Assuming URL is /courses/<course_id>/edit/
+    const courseId = window.location.pathname.split('/')[2];
+    const backButton = document.getElementById('back-button');
+    backButton.href = `/courses/${courseId}`;
 
     fetch(`/api/courses/${courseId}`, {
         headers: { 'Authorization': 'Token ' + token }
@@ -75,5 +77,10 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(() => location.reload());  // Refresh the page to show the new section
         }
+    });
+
+        // Add new content event listener
+    document.getElementById('add-content-btn').addEventListener('click', function() {
+        window.location.href = `/content/${sectionId}/create`;  // Redirect to add new content page
     });
 });
