@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Set course title, description, and teacher
             document.querySelector('.course-title').textContent = data.course.title;
             document.querySelector('.course-description').textContent = data.course.description;
-            document.querySelector('.course-teacher').textContent = data.course.teacher.full_name;
+            document.querySelector('.course-teacher').textContent = data.course.teacher.username;
 
             // Handle button state based on user authentication and roles
             if (token) {
