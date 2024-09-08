@@ -5,34 +5,40 @@ document.addEventListener('DOMContentLoaded', function() {
     const prevButton = document.getElementById('prev-page');
     const nextButton = document.getElementById('next-page');
 
+    const userCoursesSection = document.getElementById('user-courses-section');
     const userCoursesContainer = document.getElementById('user-courses-container');
     const createCourseButtonContainer = document.getElementById('create-course-button-container')
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem('token');
 
-        // If the user is authenticated (has a token), fetch their courses and permissions
+    // If the user is authenticated (has a token), fetch their courses and permissions
     if (token) {
         fetch('/api/user-courses', {
             headers: {'Authorization': 'Token ' + token}
         })
             .then(response => response.json())
             .then(data => {
+                // Show the section only if the user can add courses
                 if (data.can_add_courses) {
+                    userCoursesSection.style.display = 'block';  // Show "Your Courses" section
+
                     // Display the "Create New Course" button if the user can add courses
                     createCourseButtonContainer.innerHTML = `
                     <a href="/courses/create" class="btn btn-primary">Create New Course</a>
                 `;
 
-                    // Display the user's courses
+                    // Display the user's courses (only titles as clickable links)
                     if (data.user_courses.length > 0) {
                         data.user_courses.forEach(course => {
                             const courseDiv = document.createElement('div');
                             courseDiv.className = 'course';
-                            courseDiv.innerHTML = `<h3>${course.title}</h3><p>${course.description}</p>`;
+                            courseDiv.innerHTML = `<a href="/courses/${course.id}" class="course-link">${course.title}</a>`;
                             userCoursesContainer.appendChild(courseDiv);
                         });
                     } else {
                         userCoursesContainer.innerHTML = `<p>You haven't created any courses yet.</p>`;
                     }
+                } else {
+                    userCoursesSection.style.display = 'none';  // Hide "Your Courses" section for users without permission
                 }
             })
             .catch(error => console.error('Error fetching user courses:', error));
@@ -50,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 data.results.forEach(course => {
                     const courseDiv = document.createElement('div');
                     courseDiv.className = 'course';
-                    courseDiv.innerHTML = `<h3>${course.title}</h3><p>${course.description}</p>`;
+                    courseDiv.innerHTML = `<a href="/courses/${course.id}" class="course-link">${course.title}</a>`;
                     courseContainer.appendChild(courseDiv);
                 });
 

@@ -166,9 +166,12 @@ class UserCoursesAPIView(views.APIView):
             # Get courses created by the user (if they are allowed to add courses)
             user_courses = Course.objects.filter(teacher=user_profile) if can_add_courses else []
 
+            # Use CourseSerializer to serialize the user_courses
+            user_courses_data = CourseSerializer(user_courses, many=True).data
+
             return Response({
                 'can_add_courses': can_add_courses,
-                'user_courses': [{'title': course.title, 'description': course.description} for course in user_courses]
+                'user_courses': user_courses_data
             })
         except UserProfile.DoesNotExist:
             return Response({'error': 'User profile not found'}, status=404)

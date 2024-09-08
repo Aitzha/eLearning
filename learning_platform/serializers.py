@@ -39,4 +39,4 @@ class UserProfilePrivateSerializer(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
-        fields = ['title', 'description', 'teacher']
+        fields = ['id', 'title', 'description', 'teacher']
