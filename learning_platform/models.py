@@ -62,10 +62,10 @@ class ContentItem(models.Model):
 
 class Enrollment(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='enrollments')
-    student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='enrollments')
+    student = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='enrollments')
 
     def __str__(self):
-        return f"{self.student.username} enrolled in {self.course.title}"
+        return f"{self.student.user.username} enrolled in {self.course.title}"
 
     class Meta:
         unique_together = ('course', 'student')
@@ -73,9 +73,9 @@ class Enrollment(models.Model):
 
 class Feedback(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='feedbacks')
-    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    student = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     text = models.TextField()
     date_posted = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Feedback by {self.student.username} on {self.course.title}"
+        return f"Feedback by {self.student.user.username} on {self.course.title}"
