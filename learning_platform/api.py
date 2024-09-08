@@ -214,7 +214,7 @@ class CourseDetailAPIView(views.APIView):
             return Response({'error': 'Course not found'}, status=404)
 
 
-class SectionManagementAPIView(views.APIView):
+class SectionManageAPIView(views.APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, section_id):
@@ -289,7 +289,7 @@ class SectionManagementAPIView(views.APIView):
             return Response({'error': 'Section not found or you are not the course creator.'}, status=404)
 
 
-class ContentItemManagementAPIView(views.APIView):
+class ContentItemManageAPIView(views.APIView):
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]  # Allows handling file uploads
 
