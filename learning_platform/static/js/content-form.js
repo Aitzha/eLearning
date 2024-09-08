@@ -5,14 +5,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const backButton = document.getElementById('back-button');
     const pathParts = window.location.pathname.split('/');
     const token = localStorage.getItem('token');
-    let isEditMode = pathParts[3] !== 'create';  // If not in "create" mode, it's edit mode
+    let isEditMode = pathParts[3] !== 'create';
     let sectionId = null;
     let contentId = null;
 
     if (isEditMode) {
-        contentId = pathParts[2];  // Extract content_id from URL (content/<content_id>/edit/)
+        contentId = pathParts[2];
     } else {
-        sectionId = pathParts[2];  // Extract section_id from URL (content/<section_id>/create/)
+        sectionId = pathParts[2];
     }
 
     function toggleFields() {
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             document.getElementById('title').value = data.title;
             document.getElementById('content_type').value = data.content_type;
-            sectionId = data.section_id;  // Store section_id from API response
+            sectionId = data.section;  // Store section_id from API response
 
             // Set back button URL
             backButton.href = `/sections/${sectionId}/edit/`;
