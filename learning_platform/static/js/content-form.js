@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const contentTypeField = document.getElementById('content_type');
     const videoUrlField = document.getElementById('video-url-field');
     const fileField = document.getElementById('file-field');
+    const backButton = document.getElementById('back-button');
     const pathParts = window.location.pathname.split('/');
     const token = localStorage.getItem('token');
     let isEditMode = pathParts[3] !== 'create';  // If not in "create" mode, it's edit mode
@@ -14,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
         sectionId = pathParts[2];  // Extract section_id from URL (content/<section_id>/create/)
     }
 
-    console.log("edit mode: " + isEditMode)
     function toggleFields() {
         if (contentTypeField.value === 'video') {
             videoUrlField.style.display = 'block';
@@ -34,17 +34,26 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             document.getElementById('title').value = data.title;
             document.getElementById('content_type').value = data.content_type;
-            sectionId = data.section_id;  // Store section_id for redirect after update
+            sectionId = data.section_id;  // Store section_id from API response
+
+            // Set back button URL
+            backButton.href = `/sections/${sectionId}/edit/`;
+
             toggleFields();
 
             if (data.content_type === 'video') {
                 document.getElementById('video_url').value = data.video_url;
             }
+        })
+        .catch(error => {
+            console.error('Error fetching content data:', error);
+            alert('Failed to load content data.');
         });
     } else {
+        // Set back button URL when in add mode (use sectionId from URL)
+        backButton.href = `/sections/${sectionId}/edit/`;
         toggleFields();
     }
-
     contentTypeField.addEventListener('change', toggleFields);
 
     document.getElementById('content-form').addEventListener('submit', function(event) {
