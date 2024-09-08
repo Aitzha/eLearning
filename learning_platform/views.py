@@ -48,8 +48,8 @@ def section_edit(request, section_id):
 
 
 def add_content(request, section_id):
-    return render(request, 'add-content.html', {'section_id': section_id})
+    return render(request, 'content-form.html', {'section_id': section_id})
 
 
 def content_edit(request, content_id):
-    return render(request, 'content-edit.html', {'content_id': content_id})
+    return render(request, 'content-form.html', {'content_id': content_id})
