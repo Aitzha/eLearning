@@ -153,6 +153,13 @@ class UserCoursesAPIView(views.APIView):
 class CourseEnrollmentAPIView(views.APIView):
     permission_classes = [IsAuthenticated]
 
+    def get(self, request):
+        enrollments = Enrollment.objects.filter(student=request.user.profile)
+        courses = [enrollment.course for enrollment in enrollments]
+        serializer = CourseSerializer(courses, many=True)
+        return Response(serializer.data)
+
+
     def post(self, request, course_id, action):
         try:
             course = Course.objects.get(id=course_id)

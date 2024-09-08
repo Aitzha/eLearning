@@ -25,6 +25,7 @@ urlpatterns = [
     path('api/content-items/<int:section_id>/add', ContentItemManageAPIView.as_view(), name='content-item-add'),
 
     path('api/courses/<int:course_id>/<str:action>', CourseEnrollmentAPIView.as_view(), name='course-enroll-withdraw'),
+    path('api/user-enrollments', CourseEnrollmentAPIView.as_view(), name='user-enrollments'),
 
     path('', index, name='index'),
     path('profile', profile, name='profile'),
