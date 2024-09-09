@@ -9,7 +9,7 @@ from .views import *
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="Your API Title",
+      title="Title",
       default_version='v1',
       description="API documentation",
       terms_of_service="https://www.google.com/policies/terms/",
