@@ -60,7 +60,3 @@ urlpatterns = [
     path('content/<int:content_id>/edit', content_edit, name='content-edit'),
     path('content/<int:content_id>/view', content_view, name='content-view'),
 ]
-
-# This serves media files during development
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
