@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'rest_framework',
+    'drf_yasg',
     'rest_framework.authtoken',
     'learning_platform.apps.LearningPlatformConfig',
     'django.contrib.admin',
